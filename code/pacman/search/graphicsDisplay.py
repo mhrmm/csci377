@@ -562,7 +562,6 @@ class PacmanGraphics:
         remove_from_screen(capsuleImages[(x, y)])
 
     def drawExpandedCells(self, cells):
-        pass
         """
         Draws an overlay of expanded grid positions for search agents
         """
@@ -576,7 +575,7 @@ class PacmanGraphics:
             block = square(screenPos,
                      0.5 * self.gridSize,
                      color = cellColor,
-                 filled = 1, behind=2)
+                     filled = 1, behind=2)
             self.expandedCells.append(block)
             if self.frameTime < 0:
                 refresh()
