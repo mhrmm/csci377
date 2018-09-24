@@ -72,6 +72,28 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+
+def nullHeuristic(state, problem=None):
+    """
+    A heuristic function estimates the cost from the current state to the nearest
+    goal in the provided SearchProblem.  This heuristic is trivial.
+    """
+    return 0
+
+def generalPurposeSearch(problem, stack, heuristic=nullHeuristic):       
+    marked = set()
+    stack.push(([], problem.getStartState(), 0, 0))
+    while not stack.isEmpty():
+        (directions, nextState, costSoFar, stateValue) = stack.pop()
+        if problem.isGoalState(nextState):
+            return directions
+        if nextState not in marked:
+            successors = problem.getSuccessors(nextState)
+            for (successor, direction, cost) in successors:
+                hCost = heuristic(successor, problem)
+                stack.push((directions + [direction], successor, costSoFar + cost, costSoFar + cost + hCost))
+                marked.add(nextState)
+
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
@@ -87,71 +109,27 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     # Problem with this code: does not use linear space
-    stack = util.Stack()
-    marked = set()
-    stack.push(([], problem.getStartState()))
-    while not stack.isEmpty():
-        (directions, nextState) = stack.pop()
-        if problem.isGoalState(nextState):
-            return directions
-        if nextState not in marked:
-            successors = problem.getSuccessors(nextState)
-            for (successor, direction, cost) in successors:
-                stack.push((directions + [direction], successor))
-                marked.add(nextState)
+    return generalPurposeSearch(problem, util.Stack())
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    stack = util.Queue()
-    marked = set()
-    stack.push(([], problem.getStartState()))
-    while not stack.isEmpty():
-        (directions, nextState) = stack.pop()
-        if problem.isGoalState(nextState):
-            return directions
-        if nextState not in marked:
-            successors = problem.getSuccessors(nextState)
-            for (successor, direction, cost) in successors:
-                stack.push((directions + [direction], successor))
-                marked.add(nextState)
+    return generalPurposeSearch(problem, util.Queue())
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    stack = util.PriorityQueueWithFunction(lambda x: x[2])
-    marked = set()
-    stack.push(([], problem.getStartState(), 0))
-    while not stack.isEmpty():
-        (directions, nextState, costSoFar) = stack.pop()
-        if problem.isGoalState(nextState):
-            return directions
-        if nextState not in marked:
-            successors = problem.getSuccessors(nextState)
-            for (successor, direction, cost) in successors:
-                stack.push((directions + [direction], successor, costSoFar + cost))
-                marked.add(nextState)
-
-def nullHeuristic(state, problem=None):
-    """
-    A heuristic function estimates the cost from the current state to the nearest
-    goal in the provided SearchProblem.  This heuristic is trivial.
-    """
-    return 0
+    return generalPurposeSearch(
+            problem, 
+            util.PriorityQueueWithFunction(lambda x: x[2]))
+            
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    stack = util.PriorityQueueWithFunction(lambda x: x[3])
-    marked = set()
-    stack.push(([], problem.getStartState(), 0, 0))
-    while not stack.isEmpty():
-        (directions, nextState, costSoFar, stateValue) = stack.pop()
-        if problem.isGoalState(nextState):
-            return directions
-        if nextState not in marked:
-            successors = problem.getSuccessors(nextState)
-            for (successor, direction, cost) in successors:
-                hCost = heuristic(successor, problem)
-                stack.push((directions + [direction], successor, costSoFar + cost, costSoFar + cost + hCost))
-                marked.add(nextState)
+    return generalPurposeSearch(
+            problem, 
+            util.PriorityQueueWithFunction(lambda x: x[3]),
+            heuristic)
 
 
 # Abbreviations
