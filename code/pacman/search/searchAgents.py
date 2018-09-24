@@ -476,42 +476,49 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    heuristic = mstHeuristic([position] + foodGrid.asList())
+    heuristics = FoodHeuristics()
+    heuristic = heuristics.mstHeuristic([position] + foodGrid.asList())
     return heuristic
 
 
-def mstHeuristic(dots):
-    """
-    Gets 4/4
-    """
-    from scipy.sparse import csr_matrix
-    from scipy.sparse.csgraph import minimum_spanning_tree
-    pairs = [(i, j) for i in range(len(dots)) for j in range(len(dots)) if i < j]
-    row = [dot1 for (dot1, dot2) in pairs]
-    col = [dot2 for (dot1, dot2) in pairs]
-    data = [euclideanDist(dots[dot1], dots[dot2]) for (dot1, dot2) in pairs]
-    matrix = csr_matrix((data, (row, col)), shape=(len(dots), len(dots)))
-    Tcsr = minimum_spanning_tree(matrix)
-    return Tcsr.sum()
+""" 
+The following are three food heuristics that obtain scores of 2/4,
+3/4, and 4/4.
+"""
+class FoodHeuristics:
 
+    def simpleFoodHeuristic(self, state, problem):
+        """
+        Gets 2/4
+        """
+        position, foodGrid = state
+        return len(foodGrid.asList())
 
-def findMinimalDist(position, extraPositions):
-    dists = [euclideanDist(position, pos2) for pos2 in extraPositions]
-    return min(dists)
+    def minimalDistHeuristic(self, position, extraPositions):
+        """
+        Gets 3/4
+        """
+        def findMinimalDist(position, extraPositions):
+            dists = [euclideanDist(position, pos2) for pos2 in extraPositions]
+            return min(dists)
+        minimalDists = [findMinimalDist(pos, list(set(extraPositions) - set([pos])) + [position]) for pos in extraPositions]
+        return sum(sorted(minimalDists))
 
-def minimalDistHeuristic(position, extraPositions):
-    """
-    Gets 3/4
-    """
-    minimalDists = [findMinimalDist(pos, list(set(extraPositions) - set([pos])) + [position]) for pos in extraPositions]
-    return sum(sorted(minimalDists))
-
-def simpleFoodHeuristic(state, problem):
-    """
-    Gets 2/4
-    """
-    position, foodGrid = state
-    return len(foodGrid.asList())
+    def mstHeuristic(self, dots):
+        """
+        Gets 4/4
+        """
+        from scipy.sparse import csr_matrix
+        from scipy.sparse.csgraph import minimum_spanning_tree
+        pairs = [(i, j) for i in range(len(dots)) for j in range(len(dots)) if i < j]
+        row = [dot1 for (dot1, dot2) in pairs]
+        col = [dot2 for (dot1, dot2) in pairs]
+        data = [euclideanDist(dots[dot1], dots[dot2]) for (dot1, dot2) in pairs]
+        matrix = csr_matrix((data, (row, col)), shape=(len(dots), len(dots)))
+        Tcsr = minimum_spanning_tree(matrix)
+        return Tcsr.sum()
+    
+    
 
 
 class ClosestDotSearchAgent(SearchAgent):
@@ -594,8 +601,3 @@ def mazeDistance(point1, point2, gameState):
     assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
     prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
     return len(search.bfs(prob))
-
-
-
-
-    
