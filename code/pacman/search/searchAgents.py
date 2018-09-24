@@ -324,7 +324,8 @@ class CornersProblem(search.SearchProblem):
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
             if not hitsWall:
-                revisedGoals = tuple([goals[i] or (nextx, nexty) == corner for (i, corner) in enumerate(self.corners)])
+                revisedGoals = tuple([goals[i] or (nextx, nexty) == corner 
+                                      for (i, corner) in enumerate(self.corners)])
                 successors.append((((nextx, nexty), revisedGoals), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
@@ -357,6 +358,21 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+    def manhattanDist(xy1, xy2):
+        return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+    
+    def manhattanHeuristicRecursive(position, extraPositions):
+        "The Manhattan distance heuristic for a CornerSearchProblem"
+        if len(extraPositions) == 0:
+            return 0
+        distances = [(manhattanDist(position, extraPosition), extraPosition) for extraPosition in extraPositions]
+        sortedDistances = sorted(distances)
+        if len(distances) > 1:
+            extra = manhattanHeuristicRecursive(sortedDistances[0][1], [pos for (i, pos) in sortedDistances[1:]])
+        else:
+            extra = 0
+        return sortedDistances[0][0] + extra
+
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
     if problem.isGoalState(state):
@@ -365,25 +381,6 @@ def cornersHeuristic(state, problem):
     activeCorners = [corner for (i, corner) in enumerate(corners) if not visitedCorners[i]]
     heuristic = manhattanHeuristicRecursive(currentPosition, activeCorners)
     return heuristic
-
-def manhattanHeuristicRecursive(position, extraPositions):
-    "The Manhattan distance heuristic for a CornerSearchProblem"
-    if len(extraPositions) == 0:
-        return 0
-    distances = [(manhattanDist(position, extraPosition), extraPosition) for extraPosition in extraPositions]
-    sortedDistances = sorted(distances)
-    if len(distances) > 1:
-        extra = manhattanHeuristicRecursive(sortedDistances[0][1], [pos for (i, pos) in sortedDistances[1:]])
-    else:
-        extra = 0
-    return sortedDistances[0][0] + extra
-
-def manhattanDist(xy1, xy2):
-    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-
-def euclideanDist(xy1, xy2):
-    return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
-
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -487,9 +484,14 @@ The following are three food heuristics that obtain scores of 2/4,
 """
 class FoodHeuristics:
 
+    def euclideanDist(self, xy1, xy2):
+        return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+
     def simpleFoodHeuristic(self, state, problem):
         """
-        Gets 2/4
+        Just checks how much food is left.
+        
+        Gets 2/4.
         """
         position, foodGrid = state
         return len(foodGrid.asList())
@@ -499,7 +501,7 @@ class FoodHeuristics:
         Gets 3/4
         """
         def findMinimalDist(position, extraPositions):
-            dists = [euclideanDist(position, pos2) for pos2 in extraPositions]
+            dists = [self.euclideanDist(position, pos2) for pos2 in extraPositions]
             return min(dists)
         minimalDists = [findMinimalDist(pos, list(set(extraPositions) - set([pos])) + [position]) for pos in extraPositions]
         return sum(sorted(minimalDists))
@@ -513,7 +515,7 @@ class FoodHeuristics:
         pairs = [(i, j) for i in range(len(dots)) for j in range(len(dots)) if i < j]
         row = [dot1 for (dot1, dot2) in pairs]
         col = [dot2 for (dot1, dot2) in pairs]
-        data = [euclideanDist(dots[dot1], dots[dot2]) for (dot1, dot2) in pairs]
+        data = [self.euclideanDist(dots[dot1], dots[dot2]) for (dot1, dot2) in pairs]
         matrix = csr_matrix((data, (row, col)), shape=(len(dots), len(dots)))
         Tcsr = minimum_spanning_tree(matrix)
         return Tcsr.sum()
