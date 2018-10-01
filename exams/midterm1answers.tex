@@ -1,0 +1,134 @@
+\documentclass{article}
+\usepackage{enumerate}
+\usepackage{amsmath}
+\title{CSCI 377 Midterm 1}
+\date{Monday, Sept. 24, 2018}
+
+\begin{document}
+
+\maketitle
+
+\section{True/False}
+
+
+
+\begin{enumerate}[(a)]
+\item True or \textbf{False}? $B \land P \models P$ is in the language $\mathcal{L}_{PL}(\Sigma)$, where $\Sigma = \{B, P, F\}$. 
+\item \textbf{True} or False? Let $RC(S)$ be the resolution closure of a set $S$ of clauses. Then $RC(RC(S)) = RC(S)$. 
+\item True or \textbf{False}? $\forall x \exists y  (x \Rightarrow y)$ is a sentence in first order logic.
+\item \textbf{True} or False? $\alpha \lor (\beta \land \gamma) \equiv (\alpha \lor \beta) \land (\gamma \lor \alpha)$ for any sentences $\alpha, \beta, \gamma \in \mathcal{L}_{PL}(\Sigma)$.
+\item \textbf{True} or False? If I generate a random 3-CNF sentence with 100 clauses over 100 variables, the probability is greater than 50\% that it will be satisfiable.
+\item \textbf{True} or False? For sentences $\alpha, \beta \in \mathcal{L}_{PL}(\Sigma)$, $\alpha \models \beta \mbox{ iff } \alpha \land \lnot \beta$ is satisfiable.
+\item \textbf{True} or False? Suppose you have a conjunction of 5 CNF clauses, each of which mentions exactly three different variables (either positive or negative literals). This conjunction MUST be satisfiable.
+\item True or \textbf{False}? There are exactly $2^n$ unique truth tables over $n$ Boolean variables.
+\item \textbf{True} or False? $(A \Leftrightarrow (B \land \lnot C)) \equiv (\lnot A \lor B) \land (\lnot A \lor \lnot C) \land (\lnot B \lor C \lor A)$
+\item \textbf{True} or False? If a first-order logical sentence $\alpha $ does not contain the constant (i.e. zero-argument function) $A$, then $\exists x (Bird(x) \land Child(x, Bob)) \models \alpha $ if and only if $(Bird(A) \land Child(A, Bob)) \models \alpha$.
+\end{enumerate}
+
+\section{Resolution Closure}
+
+What is the resolution closure of $\{ A \lor B \lor \lnot C, A \lor \lnot B \lor C, \lnot A \lor D \}$? Do not include clauses that are logically equivalent to $\mathsf{True}$.
+
+\begin{gather*}
+\mathbf{A \lor B \lor \lnot C}\\
+\mathbf{A \lor \lnot B \lor C} \\
+\mathbf{\lnot A \lor D}\\
+\mathbf{B \lor \lnot C \lor D}\\
+\mathbf{\lnot B \lor C \lor D}\\
+\end{gather*}
+
+\section{The Social Club}
+
+There's a social club that you want to join. As a condition of entry, they offer you two drinks, one of which is poisoned and one of which is not. You are told you must choose one to drink. For some reason, you still really want to join the club.
+
+Conveniently, each member of the club is either a truthteller (truthtellers always tell the truth) or a liar (liars always lie). To help yourself make the decision, you need to create a first-order logic formulation of the situation.
+
+Use the following signature:
+
+\begin{itemize}
+	\item $\mathsf{Drink1}$ is a zero-argument function that represents the first drink
+	\item $\mathsf{Drink2}$ is a zero-argument function that represents the second drink
+	\item $\mathsf{Poisoned}(d)$ is a one-argument predicate that indicates whether d is the poisoned drink
+	\item $\mathsf{Member}(m)$ is a one-argument predicate that indicates whether m is a club member
+	\item $\mathsf{Liar}(m)$ is a one-argument predicate that indicates whether m is a liar
+	\item $\mathsf{SayYes}(m, d)$ is a two-argument predicate that indicates whether m would say ``yes, drink d is poisoned" if asked
+\end{itemize}
+
+\noindent Express the following in first order logic:
+
+\begin{enumerate}[(a)]
+\item ``Exactly one drink is poisoned."
+\end{enumerate}
+
+\begin{gather*}
+\mathsf{Poisoned}(\mathsf{Drink1}) \lor \mathsf{Poisoned}(\mathsf{Drink2}) \\
+\lnot \mathsf{Poisoned}(\mathsf{Drink1}) \lor \lnot \mathsf{Poisoned}(\mathsf{Drink2}) \\
+\end{gather*}
+
+\begin{enumerate}[(b)]
+\item ``Exactly one club member is a liar."
+\end{enumerate}
+
+\begin{gather*}
+\exists x (\mathsf{Member}(x) \land \mathsf{Liar}(x) )\\
+\forall x \forall y ((\mathsf{Member}(x) \land \mathsf{Member}(y) \land \mathsf{Liar}(x) \land \lnot (x=y)) \Rightarrow \lnot \mathsf{Liar}(y) )
+\end{gather*}
+
+
+\begin{enumerate}[(c)]
+\item ``When asked about Drink1, a liar always lies about whether Drink1 is poisoned and a truthteller always tells the truth about whether Drink1 is poisoned."
+\end{enumerate}
+
+
+$\forall m (\mathsf{SayYes}(m, \mathsf{Drink1}) \Leftrightarrow ((\mathsf{Liar}(m) \land \lnot \mathsf{Poisoned}(\mathsf{Drink1})) \lor (\lnot \mathsf{Liar}(m) \land \mathsf{Poisoned}(\mathsf{Drink1})) $
+
+
+\section{Resolution for 2SAT and 3SAT}
+
+In class, we used code for a resolution solver that looked something like this:
+
+\begin{verbatim}
+def resolution_solver(C):
+    # C is a list of CNF clauses
+   
+    class LocalState:
+        processed = set()
+        unprocessed = C
+    
+    def process_next_clause():
+        next_to_process = local.unprocessed[0]
+        local.unprocessed = local.unprocessed[1:]
+        for clause in local.processed:
+            for resolvent in resolve(next_to_process, clause):
+                if resolvent not in local.processed | set(local.unprocessed):
+                    local.unprocessed.append(resolvent)  
+                if resolvent.is_false():
+                    return False
+        local.processed.add(next_to_process)
+        return True
+        
+    local = LocalState()
+    while len(local.unprocessed) > 0:
+        if not process_next_clause():
+            return False
+    return True	
+\end{verbatim}
+
+\noindent Suppose that the signature contains $n$ symbols, and that a call to $\mathsf{resolve}(\mathsf{c1}, \mathsf{c2})$ returns the list of clauses that can be obtained by resolving clause $\mathsf{c1}$ and clause $\mathsf{c2}$. As usual, assume that a clause cannot contain both the positive and negative literal for the same symbol (e.g. $C \lor \lnot C$ is not a clause). Also assume that two clauses that contain the exact same literals are the same clause (e.g. $A \lor \lnot B$ should be considered to be the same clause as $\lnot B \lor A$).
+
+\begin{enumerate}[(a)]
+\item What is the worst-case number of calls to $\mathsf{process\_next\_clause}$ if every clause in $C$ contains at most 2 literals? Justify your answer.
+\item What is the worst-case number of calls to $\mathsf{process\_next\_clause}$ if every clause in $C$ contains at most 3 literals? Justify your answer.
+\end{enumerate}
+
+\textbf{
+\begin{enumerate}[(a)]
+\item $4 \binom{n}{2} + 2n + 1 = O(n^2)$. Resolving a 2-literal clause with another 2-literal clause can only generate a clause with at most 2 literals, thus we can only ever generate clauses with at most 2 literals. There are $4 \binom{n}{2}$ clauses with exactly two literals, $2n$ clauses with exactly one literal, and $1$ clause with no literals (i.e. $False$).
+\item $3^n$. You can obtain a clause with 4 literals by resolving two 3-literal clauses. Once 4-literal clauses are generated, then you can resolve these with 3-literal clauses to obtain 5-literal clauses, etc., until you have potentially generated any clause. There are $3^n$ possible clauses over $n$ symbols.
+\end{enumerate}
+}
+
+
+
+	
+\end{document}\
