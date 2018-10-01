@@ -18,6 +18,15 @@ import random, util
 
 from game import Agent
 
+def manhattanDist(xy1, xy2):
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+
+def closestSquare(xy1, xys):
+    if len(xy1) == 0:
+        return None
+    dists = [(manhattanDist(xy1, (x, y)), (x, y)) for (x, y) in xys]
+    return min(dists)[1]
+
 class ReflexAgent(Agent):
     """
       A reflex agent chooses an action at each choice point by examining
@@ -51,6 +60,8 @@ class ReflexAgent(Agent):
 
         return legalMoves[chosenIndex]
 
+
+
     def evaluationFunction(self, currentGameState, action):
         """
         Design a better evaluation function here.
@@ -72,10 +83,22 @@ class ReflexAgent(Agent):
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-
-        "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
-
+        from search.searchAgents import ClosestDotSearchAgent
+        agent = ClosestDotSearchAgent()
+        if len(newFood.asList()) == 0:
+            return 1000
+        score = 0
+        ghostDistance = min([manhattanDist(ghostState.getPosition(), newPos) for ghostState in newGhostStates])
+        if ghostDistance <= 1:
+            score -= 500
+        #score += 15 * ghostDistance          
+        if successorGameState.getScore() > currentGameState.getScore():
+            score += 50
+        else:
+            score += 50 - 10 * len(agent.findPathToClosestDot(successorGameState))
+        return score
+    
+    
 def scoreEvaluationFunction(currentGameState):
     """
       This default evaluation function just returns the score of the state.
@@ -111,6 +134,25 @@ class MinimaxAgent(MultiAgentSearchAgent):
       Your minimax agent (question 2)
     """
 
+    def _evaluateNode(self, gameState, agentIndex, depth):
+        if depth == 0:
+            return (self.evaluationFunction(gameState), None)
+        actions = gameState.getLegalActions(agentIndex)
+        successors = [gameState.generateSuccessor(agentIndex, action) for action in actions]
+        nextAgentIndex = agentIndex + 1
+        if nextAgentIndex >= gameState.getNumAgents():
+            nextAgentIndex = 0
+            depth -= 1
+        evaluations = [self._evaluateNode(successor, nextAgentIndex, depth)[0] for successor in successors]
+        choices = [(e,a) for (e,a) in zip(evaluations, actions) if e is not None]
+        if len(choices) == 0:
+            choice = (self.evaluationFunction(gameState), None)
+        elif agentIndex == 0:
+            choice = max(choices)
+        else:
+            choice = min(choices)
+        return choice
+
     def getAction(self, gameState):
         """
           Returns the minimax action from the current gameState using self.depth
@@ -129,19 +171,39 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self._evaluateNode(gameState, 0, self.depth)[1]
+            
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Your minimax agent with alpha-beta pruning (question 3)
     """
+    
+    def _evaluateNode(self, gameState, agentIndex, depth):
+        if depth == 0:
+            return (self.evaluationFunction(gameState), None)
+        actions = gameState.getLegalActions(agentIndex)
+        successors = [gameState.generateSuccessor(agentIndex, action) for action in actions]
+        nextAgentIndex = agentIndex + 1
+        if nextAgentIndex >= gameState.getNumAgents():
+            nextAgentIndex = 0
+            depth -= 1
+        evaluations = [self._evaluateNode(successor, nextAgentIndex, depth)[0] for successor in successors]
+        choices = [(e,a) for (e,a) in zip(evaluations, actions) if e is not None]
+        if len(choices) == 0:
+            choice = (self.evaluationFunction(gameState), None)
+        elif agentIndex == 0:
+            choice = max(choices)
+        else:
+            choice = min(choices)
+        return choice
 
     def getAction(self, gameState):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self._evaluateNode(gameState, 0, self.depth)[1]
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
