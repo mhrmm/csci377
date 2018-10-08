@@ -294,14 +294,15 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        visitedCorners = tuple([x == self.startingPosition for x in self.corners])
-        return (self.startingPosition, visitedCorners)
+        "*** YOUR CODE HERE ***"
+        util.raiseNotDefined()
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        return state[1] == (True, True, True, True)
+        "*** YOUR CODE HERE ***"
+        util.raiseNotDefined()
 
     def getSuccessors(self, state):
         """
@@ -315,18 +316,15 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
-        (currentPosition, goals) = state
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            x,y = currentPosition
-            dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
-            hitsWall = self.walls[nextx][nexty]
-            if not hitsWall:
-                revisedGoals = tuple([goals[i] or (nextx, nexty) == corner 
-                                      for (i, corner) in enumerate(self.corners)])
-                successors.append((((nextx, nexty), revisedGoals), action, 1))
+            #   x,y = currentPosition
+            #   dx, dy = Actions.directionToVector(action)
+            #   nextx, nexty = int(x + dx), int(y + dy)
+            #   hitsWall = self.walls[nextx][nexty]
+
+            "*** YOUR CODE HERE ***"
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -358,29 +356,11 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    def manhattanDist(xy1, xy2):
-        return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-    
-    def manhattanHeuristicRecursive(position, extraPositions):
-        "The Manhattan distance heuristic for a CornerSearchProblem"
-        if len(extraPositions) == 0:
-            return 0
-        distances = [(manhattanDist(position, extraPosition), extraPosition) for extraPosition in extraPositions]
-        sortedDistances = sorted(distances)
-        if len(distances) > 1:
-            extra = manhattanHeuristicRecursive(sortedDistances[0][1], [pos for (i, pos) in sortedDistances[1:]])
-        else:
-            extra = 0
-        return sortedDistances[0][0] + extra
-
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-    if problem.isGoalState(state):
-        return 0
-    (currentPosition, visitedCorners) = state
-    activeCorners = [corner for (i, corner) in enumerate(corners) if not visitedCorners[i]]
-    heuristic = manhattanHeuristicRecursive(currentPosition, activeCorners)
-    return heuristic
+
+    "*** YOUR CODE HERE ***"
+    return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -473,55 +453,8 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    heuristics = FoodHeuristics()
-    heuristic = heuristics.mstHeuristic([position] + foodGrid.asList())
-    return heuristic
-
-
-""" 
-The following are three food heuristics that obtain scores of 2/4,
-3/4, and 4/4.
-"""
-class FoodHeuristics:
-
-    def euclideanDist(self, xy1, xy2):
-        return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
-
-    def simpleFoodHeuristic(self, state, problem):
-        """
-        Just checks how much food is left.
-        
-        Gets 2/4.
-        """
-        position, foodGrid = state
-        return len(foodGrid.asList())
-
-    def minimalDistHeuristic(self, position, extraPositions):
-        """
-        Gets 3/4
-        """
-        def findMinimalDist(position, extraPositions):
-            dists = [self.euclideanDist(position, pos2) for pos2 in extraPositions]
-            return min(dists)
-        minimalDists = [findMinimalDist(pos, list(set(extraPositions) - set([pos])) + [position]) for pos in extraPositions]
-        return sum(sorted(minimalDists))
-
-    def mstHeuristic(self, dots):
-        """
-        Gets 4/4
-        """
-        from scipy.sparse import csr_matrix
-        from scipy.sparse.csgraph import minimum_spanning_tree
-        pairs = [(i, j) for i in range(len(dots)) for j in range(len(dots)) if i < j]
-        row = [dot1 for (dot1, dot2) in pairs]
-        col = [dot2 for (dot1, dot2) in pairs]
-        data = [self.euclideanDist(dots[dot1], dots[dot2]) for (dot1, dot2) in pairs]
-        matrix = csr_matrix((data, (row, col)), shape=(len(dots), len(dots)))
-        Tcsr = minimum_spanning_tree(matrix)
-        return Tcsr.sum()
-    
-    
-
+    "*** YOUR CODE HERE ***"
+    return 0
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -550,7 +483,9 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-        return search.bfs(problem)
+
+        "*** YOUR CODE HERE ***"
+        util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -584,7 +519,9 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
-        return state in self.food.asList()
+
+        "*** YOUR CODE HERE ***"
+        util.raiseNotDefined()
 
 def mazeDistance(point1, point2, gameState):
     """
