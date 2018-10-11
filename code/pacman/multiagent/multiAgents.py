@@ -129,81 +129,73 @@ class MultiAgentSearchAgent(Agent):
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
 
-class MinimaxAgent(MultiAgentSearchAgent):
-    """
-      Your minimax agent (question 2)
-    """
-
-    def _evaluateNode(self, gameState, agentIndex, depth):
-        if depth == 0:
-            return (self.evaluationFunction(gameState), None)
-        actions = gameState.getLegalActions(agentIndex)
-        successors = [gameState.generateSuccessor(agentIndex, action) for action in actions]
-        nextAgentIndex = agentIndex + 1
-        if nextAgentIndex >= gameState.getNumAgents():
-            nextAgentIndex = 0
-            depth -= 1
-        evaluations = [self._evaluateNode(successor, nextAgentIndex, depth)[0] for successor in successors]
-        choices = [(e,a) for (e,a) in zip(evaluations, actions) if e is not None]
-        if len(choices) == 0:
-            choice = (self.evaluationFunction(gameState), None)
-        elif agentIndex == 0:
-            choice = max(choices)
-        else:
-            choice = min(choices)
-        return choice
-
-    def getAction(self, gameState):
-        """
-          Returns the minimax action from the current gameState using self.depth
-          and self.evaluationFunction.
-
-          Here are some method calls that might be useful when implementing minimax.
-
-          gameState.getLegalActions(agentIndex):
-            Returns a list of legal actions for an agent
-            agentIndex=0 means Pacman, ghosts are >= 1
-
-          gameState.generateSuccessor(agentIndex, action):
-            Returns the successor game state after an agent takes an action
-
-          gameState.getNumAgents():
-            Returns the total number of agents in the game
-        """
-        "*** YOUR CODE HERE ***"
-        return self._evaluateNode(gameState, 0, self.depth)[1]
-            
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Your minimax agent with alpha-beta pruning (question 3)
     """
     
-    def _evaluateNode(self, gameState, agentIndex, depth):
-        if depth == 0:
-            return (self.evaluationFunction(gameState), None)
-        actions = gameState.getLegalActions(agentIndex)
-        successors = [gameState.generateSuccessor(agentIndex, action) for action in actions]
+    def _nextAgent(self, agentIndex, numAgents, depth):
         nextAgentIndex = agentIndex + 1
-        if nextAgentIndex >= gameState.getNumAgents():
+        nextDepth = depth
+        if nextAgentIndex >= numAgents:
             nextAgentIndex = 0
-            depth -= 1
-        evaluations = [self._evaluateNode(successor, nextAgentIndex, depth)[0] for successor in successors]
-        choices = [(e,a) for (e,a) in zip(evaluations, actions) if e is not None]
-        if len(choices) == 0:
-            choice = (self.evaluationFunction(gameState), None)
-        elif agentIndex == 0:
-            choice = max(choices)
+            nextDepth = depth - 1
+        return nextAgentIndex, nextDepth
+        
+    def _updateAlphaBeta(self, alpha, beta, agentIndex, successorEvaluation):
+        if agentIndex == 0:
+            alpha = max([alpha, successorEvaluation])
         else:
-            choice = min(choices)
-        return choice
+            beta = min([beta, successorEvaluation])
+        return alpha, beta
+    
+    def _cutoff(self, gameState, agentIndex, depth):
+        return depth == 0 or len(gameState.getLegalActions(agentIndex)) == 0
+      
+    def _improvement(self, evaluation, bestSoFar, agentIndex):
+        return (bestSoFar is None or 
+                (agentIndex == 0 and evaluation > bestSoFar) or 
+                (agentIndex != 0 and evaluation < bestSoFar))
+        
+    def _evaluateNode(self, gameState, agentIndex, depth, alpha, beta):
+        if self._cutoff(gameState, agentIndex, depth):
+            return (self.evaluationFunction(gameState), None)
+        (bestEvaluation, bestAction) = (None, None)
+        nextAgentIndex, nextDepth = self._nextAgent(agentIndex, 
+                                                    gameState.getNumAgents(), 
+                                                    depth)    
+        actions = gameState.getLegalActions(agentIndex)
+        for action in actions:
+            if alpha > beta:
+                return (bestEvaluation, bestAction)                
+            successor = gameState.generateSuccessor(agentIndex, action)
+            evaluation = self._evaluateNode(successor, nextAgentIndex, nextDepth, alpha, beta)[0]
+            if self._improvement(evaluation, bestEvaluation, agentIndex):
+                bestEvaluation = evaluation
+                bestAction = action
+                alpha, beta = self._updateAlphaBeta(alpha, beta, 
+                                                    agentIndex, bestEvaluation)
+        return (bestEvaluation, bestAction)
+
 
     def getAction(self, gameState):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
         """
-        "*** YOUR CODE HERE ***"
-        return self._evaluateNode(gameState, 0, self.depth)[1]
+        alpha = float("-inf")
+        beta = float("inf")
+        return self._evaluateNode(gameState, 0, self.depth, alpha, beta)[1]
+
+
+class MinimaxAgent(AlphaBetaAgent):
+    """
+      Your minimax agent (question 2)
+    """
+    def _updateAlphaBeta(self, alpha, beta, agentIndex, successorEvaluation):
+        return alpha, beta
+             
+
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
