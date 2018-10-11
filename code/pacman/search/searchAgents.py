@@ -1,4 +1,21 @@
-# searchAgents.py
+<html>
+  <head><script src="//archive.org/includes/analytics.js?v=cf34f82" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app22.us.archive.org';v.server_ms=754;archive_analytics.send_pageview({});});</script><script type="text/javascript" src="/static/js/wbhack.js?v=1527197507.0" charset="utf-8"></script>
+
+<script type="text/javascript">
+__wbhack.init('https://web.archive.org/web');
+</script>
+<link rel="stylesheet" type="text/css" href="/static/css/banner-styles.css?v=1527197507.0" />
+<link rel="stylesheet" type="text/css" href="/static/css/iconochive.css?v=1527197507.0" />
+
+<!-- End Wayback Rewrite JS Include -->
+  <title>searchAgents.py</title>
+  </head>
+  <body>
+  <h3>searchAgents.py (<a href="http://ai.berkeley.edu/projects/release/search/v1/001/search.zip">original</a>)</h3>
+  <hr>
+  <pre>
+<span style="color: green; font-style: italic"># searchAgents.py
 # ---------------
 # Licensing Information:  You are free to use or extend these projects for
 # educational purposes provided that (1) you do not distribute or publish
@@ -12,13 +29,13 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-"""
+</span><span style="color: darkred">"""
 This file contains all of the agents that can be selected to control Pacman.  To
 select an agent, use the '-p' option when running pacman.py.  Arguments can be
 passed to your agent using '-a'.  For example, to load a SearchAgent that uses
 depth first search (dfs), run the following command:
 
-> python pacman.py -p SearchAgent -a fn=depthFirstSearch
+&gt; python pacman.py -p SearchAgent -a fn=depthFirstSearch
 
 Commands to invoke other search strategies can be found in the project
 description.
@@ -34,30 +51,30 @@ description for details.
 Good luck and happy searching!
 """
 
-from game import Directions
-from game import Agent
-from game import Actions
-import util
-import time
-import search
+</span><span style="color: blue; font-weight: bold">from </span>game <span style="color: blue; font-weight: bold">import </span>Directions
+<span style="color: blue; font-weight: bold">from </span>game <span style="color: blue; font-weight: bold">import </span>Agent
+<span style="color: blue; font-weight: bold">from </span>game <span style="color: blue; font-weight: bold">import </span>Actions
+<span style="color: blue; font-weight: bold">import </span>util
+<span style="color: blue; font-weight: bold">import </span>time
+<span style="color: blue; font-weight: bold">import </span>search
 
-class GoWestAgent(Agent):
-    "An agent that goes West until it can't."
+<span style="color: blue; font-weight: bold">class </span>GoWestAgent<span style="font-weight: bold">(</span>Agent<span style="font-weight: bold">):
+    </span><span style="color: red">"An agent that goes West until it can't."
 
-    def getAction(self, state):
-        "The agent receives a GameState (defined in pacman.py)."
-        if Directions.WEST in state.getLegalPacmanActions():
-            return Directions.WEST
-        else:
-            return Directions.STOP
+    </span><span style="color: blue; font-weight: bold">def </span>getAction<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: red">"The agent receives a GameState (defined in pacman.py)."
+        </span><span style="color: blue; font-weight: bold">if </span>Directions<span style="font-weight: bold">.</span>WEST <span style="color: blue; font-weight: bold">in </span>state<span style="font-weight: bold">.</span>getLegalPacmanActions<span style="font-weight: bold">():
+            </span><span style="color: blue; font-weight: bold">return </span>Directions<span style="font-weight: bold">.</span>WEST
+        <span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">return </span>Directions<span style="font-weight: bold">.</span>STOP
 
-#######################################################
+<span style="color: green; font-style: italic">#######################################################
 # This portion is written for you, but will only work #
 #       after you fill in parts of search.py          #
 #######################################################
 
-class SearchAgent(Agent):
-    """
+</span><span style="color: blue; font-weight: bold">class </span>SearchAgent<span style="font-weight: bold">(</span>Agent<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
     This very general search agent finds a path using a supplied search
     algorithm for a supplied search problem, then returns actions to follow that
     path.
@@ -73,35 +90,35 @@ class SearchAgent(Agent):
     Note: You should NOT change any code in SearchAgent
     """
 
-    def __init__(self, fn='depthFirstSearch', prob='PositionSearchProblem', heuristic='nullHeuristic'):
-        # Warning: some advanced Python magic is employed below to find the right functions and problems
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>fn<span style="font-weight: bold">=</span><span style="color: red">'depthFirstSearch'</span><span style="font-weight: bold">, </span>prob<span style="font-weight: bold">=</span><span style="color: red">'PositionSearchProblem'</span><span style="font-weight: bold">, </span>heuristic<span style="font-weight: bold">=</span><span style="color: red">'nullHeuristic'</span><span style="font-weight: bold">):
+        </span><span style="color: green; font-style: italic"># Warning: some advanced Python magic is employed below to find the right functions and problems
 
         # Get the search function from the name and heuristic
-        if fn not in dir(search):
-            raise AttributeError, fn + ' is not a search function in search.py.'
-        func = getattr(search, fn)
-        if 'heuristic' not in func.func_code.co_varnames:
-            print('[SearchAgent] using function ' + fn)
-            self.searchFunction = func
-        else:
-            if heuristic in globals().keys():
-                heur = globals()[heuristic]
-            elif heuristic in dir(search):
-                heur = getattr(search, heuristic)
-            else:
-                raise AttributeError, heuristic + ' is not a function in searchAgents.py or search.py.'
-            print('[SearchAgent] using function %s and heuristic %s' % (fn, heuristic))
-            # Note: this bit of Python trickery combines the search algorithm and the heuristic
-            self.searchFunction = lambda x: func(x, heuristic=heur)
+        </span><span style="color: blue; font-weight: bold">if </span>fn <span style="color: blue; font-weight: bold">not in </span>dir<span style="font-weight: bold">(</span>search<span style="font-weight: bold">):
+            </span><span style="color: blue; font-weight: bold">raise </span>AttributeError<span style="font-weight: bold">, </span>fn <span style="font-weight: bold">+ </span><span style="color: red">' is not a search function in search.py.'
+        </span>func <span style="font-weight: bold">= </span>getattr<span style="font-weight: bold">(</span>search<span style="font-weight: bold">, </span>fn<span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">if </span><span style="color: red">'heuristic' </span><span style="color: blue; font-weight: bold">not in </span>func<span style="font-weight: bold">.</span>func_code<span style="font-weight: bold">.</span>co_varnames<span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">print</span><span style="font-weight: bold">(</span><span style="color: red">'[SearchAgent] using function ' </span><span style="font-weight: bold">+ </span>fn<span style="font-weight: bold">)
+            </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchFunction <span style="font-weight: bold">= </span>func
+        <span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">if </span>heuristic <span style="color: blue; font-weight: bold">in </span>globals<span style="font-weight: bold">().</span>keys<span style="font-weight: bold">():
+                </span>heur <span style="font-weight: bold">= </span>globals<span style="font-weight: bold">()[</span>heuristic<span style="font-weight: bold">]
+            </span><span style="color: blue; font-weight: bold">elif </span>heuristic <span style="color: blue; font-weight: bold">in </span>dir<span style="font-weight: bold">(</span>search<span style="font-weight: bold">):
+                </span>heur <span style="font-weight: bold">= </span>getattr<span style="font-weight: bold">(</span>search<span style="font-weight: bold">, </span>heuristic<span style="font-weight: bold">)
+            </span><span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+                </span><span style="color: blue; font-weight: bold">raise </span>AttributeError<span style="font-weight: bold">, </span>heuristic <span style="font-weight: bold">+ </span><span style="color: red">' is not a function in searchAgents.py or search.py.'
+            </span><span style="color: blue; font-weight: bold">print</span><span style="font-weight: bold">(</span><span style="color: red">'[SearchAgent] using function %s and heuristic %s' </span><span style="font-weight: bold">% (</span>fn<span style="font-weight: bold">, </span>heuristic<span style="font-weight: bold">))
+            </span><span style="color: green; font-style: italic"># Note: this bit of Python trickery combines the search algorithm and the heuristic
+            </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchFunction <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">lambda </span>x<span style="font-weight: bold">: </span>func<span style="font-weight: bold">(</span>x<span style="font-weight: bold">, </span>heuristic<span style="font-weight: bold">=</span>heur<span style="font-weight: bold">)
 
-        # Get the search problem type from the name
-        if prob not in globals().keys() or not prob.endswith('Problem'):
-            raise AttributeError, prob + ' is not a search problem type in SearchAgents.py.'
-        self.searchType = globals()[prob]
-        print('[SearchAgent] using problem type ' + prob)
+        </span><span style="color: green; font-style: italic"># Get the search problem type from the name
+        </span><span style="color: blue; font-weight: bold">if </span>prob <span style="color: blue; font-weight: bold">not in </span>globals<span style="font-weight: bold">().</span>keys<span style="font-weight: bold">() </span><span style="color: blue; font-weight: bold">or not </span>prob<span style="font-weight: bold">.</span>endswith<span style="font-weight: bold">(</span><span style="color: red">'Problem'</span><span style="font-weight: bold">):
+            </span><span style="color: blue; font-weight: bold">raise </span>AttributeError<span style="font-weight: bold">, </span>prob <span style="font-weight: bold">+ </span><span style="color: red">' is not a search problem type in SearchAgents.py.'
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchType <span style="font-weight: bold">= </span>globals<span style="font-weight: bold">()[</span>prob<span style="font-weight: bold">]
+        </span><span style="color: blue; font-weight: bold">print</span><span style="font-weight: bold">(</span><span style="color: red">'[SearchAgent] using problem type ' </span><span style="font-weight: bold">+ </span>prob<span style="font-weight: bold">)
 
-    def registerInitialState(self, state):
-        """
+    </span><span style="color: blue; font-weight: bold">def </span>registerInitialState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         This is the first time that the agent sees the layout of the game
         board. Here, we choose a path to the goal. In this phase, the agent
         should compute the path to the goal and store it in a local variable.
@@ -109,32 +126,32 @@ class SearchAgent(Agent):
 
         state: a GameState object (pacman.py)
         """
-        if self.searchFunction == None: raise Exception, "No search function provided for SearchAgent"
-        starttime = time.time()
-        problem = self.searchType(state) # Makes a new search problem
-        self.actions  = self.searchFunction(problem) # Find a path
-        totalCost = problem.getCostOfActions(self.actions)
-        print('Path found with total cost of %d in %.1f seconds' % (totalCost, time.time() - starttime))
-        if '_expanded' in dir(problem): print('Search nodes expanded: %d' % problem._expanded)
+        </span><span style="color: blue; font-weight: bold">if </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchFunction <span style="font-weight: bold">== </span><span style="color: blue">None</span><span style="font-weight: bold">: </span><span style="color: blue; font-weight: bold">raise </span>Exception<span style="font-weight: bold">, </span><span style="color: red">"No search function provided for SearchAgent"
+        </span>starttime <span style="font-weight: bold">= </span>time<span style="font-weight: bold">.</span>time<span style="font-weight: bold">()
+        </span>problem <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchType<span style="font-weight: bold">(</span>state<span style="font-weight: bold">) </span><span style="color: green; font-style: italic"># Makes a new search problem
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>actions  <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchFunction<span style="font-weight: bold">(</span>problem<span style="font-weight: bold">) </span><span style="color: green; font-style: italic"># Find a path
+        </span>totalCost <span style="font-weight: bold">= </span>problem<span style="font-weight: bold">.</span>getCostOfActions<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>actions<span style="font-weight: bold">)
+        </span><span style="color: blue; font-weight: bold">print</span><span style="font-weight: bold">(</span><span style="color: red">'Path found with total cost of %d in %.1f seconds' </span><span style="font-weight: bold">% (</span>totalCost<span style="font-weight: bold">, </span>time<span style="font-weight: bold">.</span>time<span style="font-weight: bold">() - </span>starttime<span style="font-weight: bold">))
+        </span><span style="color: blue; font-weight: bold">if </span><span style="color: red">'_expanded' </span><span style="color: blue; font-weight: bold">in </span>dir<span style="font-weight: bold">(</span>problem<span style="font-weight: bold">): </span><span style="color: blue; font-weight: bold">print</span><span style="font-weight: bold">(</span><span style="color: red">'Search nodes expanded: %d' </span><span style="font-weight: bold">% </span>problem<span style="font-weight: bold">.</span>_expanded<span style="font-weight: bold">)
 
-    def getAction(self, state):
-        """
+    </span><span style="color: blue; font-weight: bold">def </span>getAction<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         Returns the next action in the path chosen earlier (in
         registerInitialState).  Return Directions.STOP if there is no further
         action to take.
 
         state: a GameState object (pacman.py)
         """
-        if 'actionIndex' not in dir(self): self.actionIndex = 0
-        i = self.actionIndex
-        self.actionIndex += 1
-        if i < len(self.actions):
-            return self.actions[i]
-        else:
-            return Directions.STOP
+        </span><span style="color: blue; font-weight: bold">if </span><span style="color: red">'actionIndex' </span><span style="color: blue; font-weight: bold">not in </span>dir<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">): </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>actionIndex <span style="font-weight: bold">= </span><span style="color: red">0
+        </span>i <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>actionIndex
+        <span style="color: blue">self</span><span style="font-weight: bold">.</span>actionIndex <span style="font-weight: bold">+= </span><span style="color: red">1
+        </span><span style="color: blue; font-weight: bold">if </span>i <span style="font-weight: bold">&lt; </span>len<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>actions<span style="font-weight: bold">):
+            </span><span style="color: blue; font-weight: bold">return </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>actions<span style="font-weight: bold">[</span>i<span style="font-weight: bold">]
+        </span><span style="color: blue; font-weight: bold">else</span><span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">return </span>Directions<span style="font-weight: bold">.</span>STOP
 
-class PositionSearchProblem(search.SearchProblem):
-    """
+<span style="color: blue; font-weight: bold">class </span>PositionSearchProblem<span style="font-weight: bold">(</span>search<span style="font-weight: bold">.</span>SearchProblem<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
     A search problem defines the state space, start state, goal test, successor
     function and cost function.  This search problem can be used to find paths
     to a particular point on the pacman board.
@@ -144,44 +161,44 @@ class PositionSearchProblem(search.SearchProblem):
     Note: this search problem is fully specified; you should NOT change it.
     """
 
-    def __init__(self, gameState, costFn = lambda x: 1, goal=(1,1), start=None, warn=True, visualize=True):
-        """
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">, </span>costFn <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">lambda </span>x<span style="font-weight: bold">: </span><span style="color: red">1</span><span style="font-weight: bold">, </span>goal<span style="font-weight: bold">=(</span><span style="color: red">1</span><span style="font-weight: bold">,</span><span style="color: red">1</span><span style="font-weight: bold">), </span>start<span style="font-weight: bold">=</span><span style="color: blue">None</span><span style="font-weight: bold">, </span>warn<span style="font-weight: bold">=</span><span style="color: blue; font-weight: bold">True</span><span style="font-weight: bold">, </span>visualize<span style="font-weight: bold">=</span><span style="color: blue; font-weight: bold">True</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         Stores the start and goal.
 
         gameState: A GameState object (pacman.py)
         costFn: A function from a search state (tuple) to a non-negative number
         goal: A position in the gameState
         """
-        self.walls = gameState.getWalls()
-        self.startState = gameState.getPacmanPosition()
-        if start != None: self.startState = start
-        self.goal = goal
-        self.costFn = costFn
-        self.visualize = visualize
-        if warn and (gameState.getNumFood() != 1 or not gameState.hasFood(*goal)):
-            print 'Warning: this does not look like a regular search maze'
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getWalls<span style="font-weight: bold">()
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>startState <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getPacmanPosition<span style="font-weight: bold">()
+        </span><span style="color: blue; font-weight: bold">if </span>start <span style="font-weight: bold">!= </span><span style="color: blue">None</span><span style="font-weight: bold">: </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>startState <span style="font-weight: bold">= </span>start
+        <span style="color: blue">self</span><span style="font-weight: bold">.</span>goal <span style="font-weight: bold">= </span>goal
+        <span style="color: blue">self</span><span style="font-weight: bold">.</span>costFn <span style="font-weight: bold">= </span>costFn
+        <span style="color: blue">self</span><span style="font-weight: bold">.</span>visualize <span style="font-weight: bold">= </span>visualize
+        <span style="color: blue; font-weight: bold">if </span>warn <span style="color: blue; font-weight: bold">and </span><span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">.</span>getNumFood<span style="font-weight: bold">() != </span><span style="color: red">1 </span><span style="color: blue; font-weight: bold">or not </span>gameState<span style="font-weight: bold">.</span>hasFood<span style="font-weight: bold">(*</span>goal<span style="font-weight: bold">)):
+            </span><span style="color: blue; font-weight: bold">print </span><span style="color: red">'Warning: this does not look like a regular search maze'
 
-        # For display purposes
-        self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
+        </span><span style="color: green; font-style: italic"># For display purposes
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_visited<span style="font-weight: bold">, </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_visitedlist<span style="font-weight: bold">, </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_expanded <span style="font-weight: bold">= {}, [], </span><span style="color: red">0 </span><span style="color: green; font-style: italic"># DO NOT CHANGE
 
-    def getStartState(self):
-        return self.startState
+    </span><span style="color: blue; font-weight: bold">def </span>getStartState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">return </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>startState
 
-    def isGoalState(self, state):
-        isGoal = state == self.goal
+    <span style="color: blue; font-weight: bold">def </span>isGoalState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span>isGoal <span style="font-weight: bold">= </span>state <span style="font-weight: bold">== </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>goal
 
-        # For display purposes only
-        if isGoal and self.visualize:
-            self._visitedlist.append(state)
-            import __main__
-            if '_display' in dir(__main__):
-                if 'drawExpandedCells' in dir(__main__._display): #@UndefinedVariable
-                    __main__._display.drawExpandedCells(self._visitedlist) #@UndefinedVariable
+        <span style="color: green; font-style: italic"># For display purposes only
+        </span><span style="color: blue; font-weight: bold">if </span>isGoal <span style="color: blue; font-weight: bold">and </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>visualize<span style="font-weight: bold">:
+            </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_visitedlist<span style="font-weight: bold">.</span>append<span style="font-weight: bold">(</span>state<span style="font-weight: bold">)
+            </span><span style="color: blue; font-weight: bold">import </span>__main__
+            <span style="color: blue; font-weight: bold">if </span><span style="color: red">'_display' </span><span style="color: blue; font-weight: bold">in </span>dir<span style="font-weight: bold">(</span>__main__<span style="font-weight: bold">):
+                </span><span style="color: blue; font-weight: bold">if </span><span style="color: red">'drawExpandedCells' </span><span style="color: blue; font-weight: bold">in </span>dir<span style="font-weight: bold">(</span>__main__<span style="font-weight: bold">.</span>_display<span style="font-weight: bold">): </span><span style="color: green; font-style: italic">#@UndefinedVariable
+                    </span>__main__<span style="font-weight: bold">.</span>_display<span style="font-weight: bold">.</span>drawExpandedCells<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_visitedlist<span style="font-weight: bold">) </span><span style="color: green; font-style: italic">#@UndefinedVariable
 
-        return isGoal
+        </span><span style="color: blue; font-weight: bold">return </span>isGoal
 
-    def getSuccessors(self, state):
-        """
+    <span style="color: blue; font-weight: bold">def </span>getSuccessors<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         Returns successor states, the actions they require, and a cost of 1.
 
          As noted in search.py:
@@ -192,119 +209,120 @@ class PositionSearchProblem(search.SearchProblem):
          cost of expanding to that successor
         """
 
-        successors = []
-        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            x,y = state
-            dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]:
-                nextState = (nextx, nexty)
-                cost = self.costFn(nextState)
-                successors.append( ( nextState, action, cost) )
+        </span>successors <span style="font-weight: bold">= []
+        </span><span style="color: blue; font-weight: bold">for </span>action <span style="color: blue; font-weight: bold">in </span><span style="font-weight: bold">[</span>Directions<span style="font-weight: bold">.</span>NORTH<span style="font-weight: bold">, </span>Directions<span style="font-weight: bold">.</span>SOUTH<span style="font-weight: bold">, </span>Directions<span style="font-weight: bold">.</span>EAST<span style="font-weight: bold">, </span>Directions<span style="font-weight: bold">.</span>WEST<span style="font-weight: bold">]:
+            </span>x<span style="font-weight: bold">,</span>y <span style="font-weight: bold">= </span>state
+            dx<span style="font-weight: bold">, </span>dy <span style="font-weight: bold">= </span>Actions<span style="font-weight: bold">.</span>directionToVector<span style="font-weight: bold">(</span>action<span style="font-weight: bold">)
+            </span>nextx<span style="font-weight: bold">, </span>nexty <span style="font-weight: bold">= </span>int<span style="font-weight: bold">(</span>x <span style="font-weight: bold">+ </span>dx<span style="font-weight: bold">), </span>int<span style="font-weight: bold">(</span>y <span style="font-weight: bold">+ </span>dy<span style="font-weight: bold">)
+            </span><span style="color: blue; font-weight: bold">if not </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls<span style="font-weight: bold">[</span>nextx<span style="font-weight: bold">][</span>nexty<span style="font-weight: bold">]:
+                </span>nextState <span style="font-weight: bold">= (</span>nextx<span style="font-weight: bold">, </span>nexty<span style="font-weight: bold">)
+                </span>cost <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>costFn<span style="font-weight: bold">(</span>nextState<span style="font-weight: bold">)
+                </span>successors<span style="font-weight: bold">.</span>append<span style="font-weight: bold">( ( </span>nextState<span style="font-weight: bold">, </span>action<span style="font-weight: bold">, </span>cost<span style="font-weight: bold">) )
 
-        # Bookkeeping for display purposes
-        self._expanded += 1 # DO NOT CHANGE
-        if state not in self._visited:
-            self._visited[state] = True
-            self._visitedlist.append(state)
+        </span><span style="color: green; font-style: italic"># Bookkeeping for display purposes
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_expanded <span style="font-weight: bold">+= </span><span style="color: red">1 </span><span style="color: green; font-style: italic"># DO NOT CHANGE
+        </span><span style="color: blue; font-weight: bold">if </span>state <span style="color: blue; font-weight: bold">not in </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_visited<span style="font-weight: bold">:
+            </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_visited<span style="font-weight: bold">[</span>state<span style="font-weight: bold">] = </span><span style="color: blue; font-weight: bold">True
+            </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_visitedlist<span style="font-weight: bold">.</span>append<span style="font-weight: bold">(</span>state<span style="font-weight: bold">)
 
-        return successors
+        </span><span style="color: blue; font-weight: bold">return </span>successors
 
-    def getCostOfActions(self, actions):
-        """
+    <span style="color: blue; font-weight: bold">def </span>getCostOfActions<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>actions<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         Returns the cost of a particular sequence of actions. If those actions
         include an illegal move, return 999999.
         """
-        if actions == None: return 999999
-        x,y= self.getStartState()
-        cost = 0
-        for action in actions:
-            # Check figure out the next state and see whether its' legal
-            dx, dy = Actions.directionToVector(action)
-            x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]: return 999999
-            cost += self.costFn((x,y))
-        return cost
+        </span><span style="color: blue; font-weight: bold">if </span>actions <span style="font-weight: bold">== </span><span style="color: blue">None</span><span style="font-weight: bold">: </span><span style="color: blue; font-weight: bold">return </span><span style="color: red">999999
+        </span>x<span style="font-weight: bold">,</span>y<span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>getStartState<span style="font-weight: bold">()
+        </span>cost <span style="font-weight: bold">= </span><span style="color: red">0
+        </span><span style="color: blue; font-weight: bold">for </span>action <span style="color: blue; font-weight: bold">in </span>actions<span style="font-weight: bold">:
+            </span><span style="color: green; font-style: italic"># Check figure out the next state and see whether its' legal
+            </span>dx<span style="font-weight: bold">, </span>dy <span style="font-weight: bold">= </span>Actions<span style="font-weight: bold">.</span>directionToVector<span style="font-weight: bold">(</span>action<span style="font-weight: bold">)
+            </span>x<span style="font-weight: bold">, </span>y <span style="font-weight: bold">= </span>int<span style="font-weight: bold">(</span>x <span style="font-weight: bold">+ </span>dx<span style="font-weight: bold">), </span>int<span style="font-weight: bold">(</span>y <span style="font-weight: bold">+ </span>dy<span style="font-weight: bold">)
+            </span><span style="color: blue; font-weight: bold">if </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls<span style="font-weight: bold">[</span>x<span style="font-weight: bold">][</span>y<span style="font-weight: bold">]: </span><span style="color: blue; font-weight: bold">return </span><span style="color: red">999999
+            </span>cost <span style="font-weight: bold">+= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>costFn<span style="font-weight: bold">((</span>x<span style="font-weight: bold">,</span>y<span style="font-weight: bold">))
+        </span><span style="color: blue; font-weight: bold">return </span>cost
 
-class StayEastSearchAgent(SearchAgent):
-    """
+<span style="color: blue; font-weight: bold">class </span>StayEastSearchAgent<span style="font-weight: bold">(</span>SearchAgent<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
     An agent for position search with a cost function that penalizes being in
     positions on the West side of the board.
 
     The cost function for stepping into a position (x,y) is 1/2^x.
     """
-    def __init__(self):
-        self.searchFunction = search.uniformCostSearch
-        costFn = lambda pos: .5 ** pos[0]
-        self.searchType = lambda state: PositionSearchProblem(state, costFn, (1, 1), None, False)
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchFunction <span style="font-weight: bold">= </span>search<span style="font-weight: bold">.</span>uniformCostSearch
+        costFn <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">lambda </span>pos<span style="font-weight: bold">: .</span><span style="color: red">5 </span><span style="font-weight: bold">** </span>pos<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">]
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchType <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">lambda </span>state<span style="font-weight: bold">: </span>PositionSearchProblem<span style="font-weight: bold">(</span>state<span style="font-weight: bold">, </span>costFn<span style="font-weight: bold">, (</span><span style="color: red">1</span><span style="font-weight: bold">, </span><span style="color: red">1</span><span style="font-weight: bold">), </span><span style="color: blue">None</span><span style="font-weight: bold">, </span><span style="color: blue; font-weight: bold">False</span><span style="font-weight: bold">)
 
-class StayWestSearchAgent(SearchAgent):
-    """
+</span><span style="color: blue; font-weight: bold">class </span>StayWestSearchAgent<span style="font-weight: bold">(</span>SearchAgent<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
     An agent for position search with a cost function that penalizes being in
     positions on the East side of the board.
 
     The cost function for stepping into a position (x,y) is 2^x.
     """
-    def __init__(self):
-        self.searchFunction = search.uniformCostSearch
-        costFn = lambda pos: 2 ** pos[0]
-        self.searchType = lambda state: PositionSearchProblem(state, costFn)
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchFunction <span style="font-weight: bold">= </span>search<span style="font-weight: bold">.</span>uniformCostSearch
+        costFn <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">lambda </span>pos<span style="font-weight: bold">: </span><span style="color: red">2 </span><span style="font-weight: bold">** </span>pos<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">]
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchType <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">lambda </span>state<span style="font-weight: bold">: </span>PositionSearchProblem<span style="font-weight: bold">(</span>state<span style="font-weight: bold">, </span>costFn<span style="font-weight: bold">)
 
-def manhattanHeuristic(position, problem, info={}):
-    "The Manhattan distance heuristic for a PositionSearchProblem"
-    xy1 = position
-    xy2 = problem.goal
-    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+</span><span style="color: blue; font-weight: bold">def </span>manhattanHeuristic<span style="font-weight: bold">(</span>position<span style="font-weight: bold">, </span>problem<span style="font-weight: bold">, </span>info<span style="font-weight: bold">={}):
+    </span><span style="color: red">"The Manhattan distance heuristic for a PositionSearchProblem"
+    </span>xy1 <span style="font-weight: bold">= </span>position
+    xy2 <span style="font-weight: bold">= </span>problem<span style="font-weight: bold">.</span>goal
+    <span style="color: blue; font-weight: bold">return </span>abs<span style="font-weight: bold">(</span>xy1<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">] - </span>xy2<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">]) + </span>abs<span style="font-weight: bold">(</span>xy1<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">] - </span>xy2<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">])
 
-def euclideanHeuristic(position, problem, info={}):
-    "The Euclidean distance heuristic for a PositionSearchProblem"
-    xy1 = position
-    xy2 = problem.goal
-    return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+</span><span style="color: blue; font-weight: bold">def </span>euclideanHeuristic<span style="font-weight: bold">(</span>position<span style="font-weight: bold">, </span>problem<span style="font-weight: bold">, </span>info<span style="font-weight: bold">={}):
+    </span><span style="color: red">"The Euclidean distance heuristic for a PositionSearchProblem"
+    </span>xy1 <span style="font-weight: bold">= </span>position
+    xy2 <span style="font-weight: bold">= </span>problem<span style="font-weight: bold">.</span>goal
+    <span style="color: blue; font-weight: bold">return </span><span style="font-weight: bold">( (</span>xy1<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">] - </span>xy2<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">]) ** </span><span style="color: red">2 </span><span style="font-weight: bold">+ (</span>xy1<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">] - </span>xy2<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">]) ** </span><span style="color: red">2 </span><span style="font-weight: bold">) ** </span><span style="color: red">0.5
 
-#####################################################
+</span><span style="color: green; font-style: italic">#####################################################
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 
-class CornersProblem(search.SearchProblem):
-    """
+</span><span style="color: blue; font-weight: bold">class </span>CornersProblem<span style="font-weight: bold">(</span>search<span style="font-weight: bold">.</span>SearchProblem<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
     This search problem finds paths through all four corners of a layout.
 
     You must select a suitable state space and successor function
     """
 
-    def __init__(self, startingGameState):
-        """
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>startingGameState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         Stores the walls, pacman's starting position and corners.
         """
-        self.walls = startingGameState.getWalls()
-        self.startingPosition = startingGameState.getPacmanPosition()
-        top, right = self.walls.height-2, self.walls.width-2
-        self.corners = ((1,1), (1,top), (right, 1), (right, top))
-        for corner in self.corners:
-            if not startingGameState.hasFood(*corner):
-                print 'Warning: no food in corner ' + str(corner)
-        self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls <span style="font-weight: bold">= </span>startingGameState<span style="font-weight: bold">.</span>getWalls<span style="font-weight: bold">()
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>startingPosition <span style="font-weight: bold">= </span>startingGameState<span style="font-weight: bold">.</span>getPacmanPosition<span style="font-weight: bold">()
+        </span>top<span style="font-weight: bold">, </span>right <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls<span style="font-weight: bold">.</span>height<span style="font-weight: bold">-</span><span style="color: red">2</span><span style="font-weight: bold">, </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls<span style="font-weight: bold">.</span>width<span style="font-weight: bold">-</span><span style="color: red">2
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>corners <span style="font-weight: bold">= ((</span><span style="color: red">1</span><span style="font-weight: bold">,</span><span style="color: red">1</span><span style="font-weight: bold">), (</span><span style="color: red">1</span><span style="font-weight: bold">,</span>top<span style="font-weight: bold">), (</span>right<span style="font-weight: bold">, </span><span style="color: red">1</span><span style="font-weight: bold">), (</span>right<span style="font-weight: bold">, </span>top<span style="font-weight: bold">))
+        </span><span style="color: blue; font-weight: bold">for </span>corner <span style="color: blue; font-weight: bold">in </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>corners<span style="font-weight: bold">:
+            </span><span style="color: blue; font-weight: bold">if not </span>startingGameState<span style="font-weight: bold">.</span>hasFood<span style="font-weight: bold">(*</span>corner<span style="font-weight: bold">):
+                </span><span style="color: blue; font-weight: bold">print </span><span style="color: red">'Warning: no food in corner ' </span><span style="font-weight: bold">+ </span>str<span style="font-weight: bold">(</span>corner<span style="font-weight: bold">)
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_expanded <span style="font-weight: bold">= </span><span style="color: red">0 </span><span style="color: green; font-style: italic"># DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        "*** YOUR CODE HERE ***"
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
 
-    def getStartState(self):
-        """
+    </span><span style="color: blue; font-weight: bold">def </span>getStartState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        visitedCorners = tuple([x == self.startingPosition for x in self.corners])
-        return (self.startingPosition, visitedCorners)
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+        </span>util<span style="font-weight: bold">.</span>raiseNotDefined<span style="font-weight: bold">()
 
-    def isGoalState(self, state):
-        """
+    </span><span style="color: blue; font-weight: bold">def </span>isGoalState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         Returns whether this search state is a goal state of the problem.
         """
-        return state[1] == (True, True, True, True)
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+        </span>util<span style="font-weight: bold">.</span>raiseNotDefined<span style="font-weight: bold">()
 
-    def getSuccessors(self, state):
-        """
+    </span><span style="color: blue; font-weight: bold">def </span>getSuccessors<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         Returns successor states, the actions they require, and a cost of 1.
 
          As noted in search.py:
@@ -314,39 +332,36 @@ class CornersProblem(search.SearchProblem):
             is the incremental cost of expanding to that successor
         """
 
-        successors = []
-        (currentPosition, goals) = state
-        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Add a successor state to the successor list if the action is legal
+        </span>successors <span style="font-weight: bold">= []
+        </span><span style="color: blue; font-weight: bold">for </span>action <span style="color: blue; font-weight: bold">in </span><span style="font-weight: bold">[</span>Directions<span style="font-weight: bold">.</span>NORTH<span style="font-weight: bold">, </span>Directions<span style="font-weight: bold">.</span>SOUTH<span style="font-weight: bold">, </span>Directions<span style="font-weight: bold">.</span>EAST<span style="font-weight: bold">, </span>Directions<span style="font-weight: bold">.</span>WEST<span style="font-weight: bold">]:
+            </span><span style="color: green; font-style: italic"># Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            x,y = currentPosition
-            dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
-            hitsWall = self.walls[nextx][nexty]
-            if not hitsWall:
-                revisedGoals = tuple([goals[i] or (nextx, nexty) == corner 
-                                      for (i, corner) in enumerate(self.corners)])
-                successors.append((((nextx, nexty), revisedGoals), action, 1))
+            #   x,y = currentPosition
+            #   dx, dy = Actions.directionToVector(action)
+            #   nextx, nexty = int(x + dx), int(y + dy)
+            #   hitsWall = self.walls[nextx][nexty]
 
-        self._expanded += 1 # DO NOT CHANGE
-        return successors
+            </span><span style="color: red">"*** YOUR CODE HERE ***"
 
-    def getCostOfActions(self, actions):
-        """
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_expanded <span style="font-weight: bold">+= </span><span style="color: red">1 </span><span style="color: green; font-style: italic"># DO NOT CHANGE
+        </span><span style="color: blue; font-weight: bold">return </span>successors
+
+    <span style="color: blue; font-weight: bold">def </span>getCostOfActions<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>actions<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         Returns the cost of a particular sequence of actions.  If those actions
         include an illegal move, return 999999.  This is implemented for you.
         """
-        if actions == None: return 999999
-        x,y= self.startingPosition
-        for action in actions:
-            dx, dy = Actions.directionToVector(action)
-            x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]: return 999999
-        return len(actions)
+        </span><span style="color: blue; font-weight: bold">if </span>actions <span style="font-weight: bold">== </span><span style="color: blue">None</span><span style="font-weight: bold">: </span><span style="color: blue; font-weight: bold">return </span><span style="color: red">999999
+        </span>x<span style="font-weight: bold">,</span>y<span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>startingPosition
+        <span style="color: blue; font-weight: bold">for </span>action <span style="color: blue; font-weight: bold">in </span>actions<span style="font-weight: bold">:
+            </span>dx<span style="font-weight: bold">, </span>dy <span style="font-weight: bold">= </span>Actions<span style="font-weight: bold">.</span>directionToVector<span style="font-weight: bold">(</span>action<span style="font-weight: bold">)
+            </span>x<span style="font-weight: bold">, </span>y <span style="font-weight: bold">= </span>int<span style="font-weight: bold">(</span>x <span style="font-weight: bold">+ </span>dx<span style="font-weight: bold">), </span>int<span style="font-weight: bold">(</span>y <span style="font-weight: bold">+ </span>dy<span style="font-weight: bold">)
+            </span><span style="color: blue; font-weight: bold">if </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls<span style="font-weight: bold">[</span>x<span style="font-weight: bold">][</span>y<span style="font-weight: bold">]: </span><span style="color: blue; font-weight: bold">return </span><span style="color: red">999999
+        </span><span style="color: blue; font-weight: bold">return </span>len<span style="font-weight: bold">(</span>actions<span style="font-weight: bold">)
 
 
-def cornersHeuristic(state, problem):
-    """
+</span><span style="color: blue; font-weight: bold">def </span>cornersHeuristic<span style="font-weight: bold">(</span>state<span style="font-weight: bold">, </span>problem<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
     A heuristic for the CornersProblem that you defined.
 
       state:   The current search state
@@ -358,38 +373,20 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    def manhattanDist(xy1, xy2):
-        return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-    
-    def manhattanHeuristicRecursive(position, extraPositions):
-        "The Manhattan distance heuristic for a CornerSearchProblem"
-        if len(extraPositions) == 0:
-            return 0
-        distances = [(manhattanDist(position, extraPosition), extraPosition) for extraPosition in extraPositions]
-        sortedDistances = sorted(distances)
-        if len(distances) > 1:
-            extra = manhattanHeuristicRecursive(sortedDistances[0][1], [pos for (i, pos) in sortedDistances[1:]])
-        else:
-            extra = 0
-        return sortedDistances[0][0] + extra
+    </span>corners <span style="font-weight: bold">= </span>problem<span style="font-weight: bold">.</span>corners <span style="color: green; font-style: italic"># These are the corner coordinates
+    </span>walls <span style="font-weight: bold">= </span>problem<span style="font-weight: bold">.</span>walls <span style="color: green; font-style: italic"># These are the walls of the maze, as a Grid (game.py)
 
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-    if problem.isGoalState(state):
-        return 0
-    (currentPosition, visitedCorners) = state
-    activeCorners = [corner for (i, corner) in enumerate(corners) if not visitedCorners[i]]
-    heuristic = manhattanHeuristicRecursive(currentPosition, activeCorners)
-    return heuristic
+    </span><span style="color: red">"*** YOUR CODE HERE ***"
+    </span><span style="color: blue; font-weight: bold">return </span><span style="color: red">0 </span><span style="color: green; font-style: italic"># Default to trivial solution
 
-class AStarCornersAgent(SearchAgent):
-    "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
-    def __init__(self):
-        self.searchFunction = lambda prob: search.aStarSearch(prob, cornersHeuristic)
-        self.searchType = CornersProblem
+</span><span style="color: blue; font-weight: bold">class </span>AStarCornersAgent<span style="font-weight: bold">(</span>SearchAgent<span style="font-weight: bold">):
+    </span><span style="color: red">"A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchFunction <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">lambda </span>prob<span style="font-weight: bold">: </span>search<span style="font-weight: bold">.</span>aStarSearch<span style="font-weight: bold">(</span>prob<span style="font-weight: bold">, </span>cornersHeuristic<span style="font-weight: bold">)
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchType <span style="font-weight: bold">= </span>CornersProblem
 
-class FoodSearchProblem:
-    """
+<span style="color: blue; font-weight: bold">class </span>FoodSearchProblem<span style="font-weight: bold">:
+    </span><span style="color: darkred">"""
     A search problem associated with finding the a path that collects all of the
     food (dots) in a Pacman game.
 
@@ -397,55 +394,55 @@ class FoodSearchProblem:
       pacmanPosition: a tuple (x,y) of integers specifying Pacman's position
       foodGrid:       a Grid (see game.py) of either True or False, specifying remaining food
     """
-    def __init__(self, startingGameState):
-        self.start = (startingGameState.getPacmanPosition(), startingGameState.getFood())
-        self.walls = startingGameState.getWalls()
-        self.startingGameState = startingGameState
-        self._expanded = 0 # DO NOT CHANGE
-        self.heuristicInfo = {} # A dictionary for the heuristic to store information
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>startingGameState<span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>start <span style="font-weight: bold">= (</span>startingGameState<span style="font-weight: bold">.</span>getPacmanPosition<span style="font-weight: bold">(), </span>startingGameState<span style="font-weight: bold">.</span>getFood<span style="font-weight: bold">())
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls <span style="font-weight: bold">= </span>startingGameState<span style="font-weight: bold">.</span>getWalls<span style="font-weight: bold">()
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>startingGameState <span style="font-weight: bold">= </span>startingGameState
+        <span style="color: blue">self</span><span style="font-weight: bold">.</span>_expanded <span style="font-weight: bold">= </span><span style="color: red">0 </span><span style="color: green; font-style: italic"># DO NOT CHANGE
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>heuristicInfo <span style="font-weight: bold">= {} </span><span style="color: green; font-style: italic"># A dictionary for the heuristic to store information
 
-    def getStartState(self):
-        return self.start
+    </span><span style="color: blue; font-weight: bold">def </span>getStartState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">return </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>start
 
-    def isGoalState(self, state):
-        return state[1].count() == 0
+    <span style="color: blue; font-weight: bold">def </span>isGoalState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: blue; font-weight: bold">return </span>state<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">].</span>count<span style="font-weight: bold">() == </span><span style="color: red">0
 
-    def getSuccessors(self, state):
-        "Returns successor states, the actions they require, and a cost of 1."
-        successors = []
-        self._expanded += 1 # DO NOT CHANGE
-        for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            x,y = state[0]
-            dx, dy = Actions.directionToVector(direction)
-            nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]:
-                nextFood = state[1].copy()
-                nextFood[nextx][nexty] = False
-                successors.append( ( ((nextx, nexty), nextFood), direction, 1) )
-        return successors
+    </span><span style="color: blue; font-weight: bold">def </span>getSuccessors<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: red">"Returns successor states, the actions they require, and a cost of 1."
+        </span>successors <span style="font-weight: bold">= []
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_expanded <span style="font-weight: bold">+= </span><span style="color: red">1 </span><span style="color: green; font-style: italic"># DO NOT CHANGE
+        </span><span style="color: blue; font-weight: bold">for </span>direction <span style="color: blue; font-weight: bold">in </span><span style="font-weight: bold">[</span>Directions<span style="font-weight: bold">.</span>NORTH<span style="font-weight: bold">, </span>Directions<span style="font-weight: bold">.</span>SOUTH<span style="font-weight: bold">, </span>Directions<span style="font-weight: bold">.</span>EAST<span style="font-weight: bold">, </span>Directions<span style="font-weight: bold">.</span>WEST<span style="font-weight: bold">]:
+            </span>x<span style="font-weight: bold">,</span>y <span style="font-weight: bold">= </span>state<span style="font-weight: bold">[</span><span style="color: red">0</span><span style="font-weight: bold">]
+            </span>dx<span style="font-weight: bold">, </span>dy <span style="font-weight: bold">= </span>Actions<span style="font-weight: bold">.</span>directionToVector<span style="font-weight: bold">(</span>direction<span style="font-weight: bold">)
+            </span>nextx<span style="font-weight: bold">, </span>nexty <span style="font-weight: bold">= </span>int<span style="font-weight: bold">(</span>x <span style="font-weight: bold">+ </span>dx<span style="font-weight: bold">), </span>int<span style="font-weight: bold">(</span>y <span style="font-weight: bold">+ </span>dy<span style="font-weight: bold">)
+            </span><span style="color: blue; font-weight: bold">if not </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls<span style="font-weight: bold">[</span>nextx<span style="font-weight: bold">][</span>nexty<span style="font-weight: bold">]:
+                </span>nextFood <span style="font-weight: bold">= </span>state<span style="font-weight: bold">[</span><span style="color: red">1</span><span style="font-weight: bold">].</span>copy<span style="font-weight: bold">()
+                </span>nextFood<span style="font-weight: bold">[</span>nextx<span style="font-weight: bold">][</span>nexty<span style="font-weight: bold">] = </span><span style="color: blue; font-weight: bold">False
+                </span>successors<span style="font-weight: bold">.</span>append<span style="font-weight: bold">( ( ((</span>nextx<span style="font-weight: bold">, </span>nexty<span style="font-weight: bold">), </span>nextFood<span style="font-weight: bold">), </span>direction<span style="font-weight: bold">, </span><span style="color: red">1</span><span style="font-weight: bold">) )
+        </span><span style="color: blue; font-weight: bold">return </span>successors
 
-    def getCostOfActions(self, actions):
-        """Returns the cost of a particular sequence of actions.  If those actions
+    <span style="color: blue; font-weight: bold">def </span>getCostOfActions<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>actions<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""Returns the cost of a particular sequence of actions.  If those actions
         include an illegal move, return 999999"""
-        x,y= self.getStartState()[0]
-        cost = 0
-        for action in actions:
-            # figure out the next state and see whether it's legal
-            dx, dy = Actions.directionToVector(action)
-            x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]:
-                return 999999
-            cost += 1
-        return cost
+        </span>x<span style="font-weight: bold">,</span>y<span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>getStartState<span style="font-weight: bold">()[</span><span style="color: red">0</span><span style="font-weight: bold">]
+        </span>cost <span style="font-weight: bold">= </span><span style="color: red">0
+        </span><span style="color: blue; font-weight: bold">for </span>action <span style="color: blue; font-weight: bold">in </span>actions<span style="font-weight: bold">:
+            </span><span style="color: green; font-style: italic"># figure out the next state and see whether it's legal
+            </span>dx<span style="font-weight: bold">, </span>dy <span style="font-weight: bold">= </span>Actions<span style="font-weight: bold">.</span>directionToVector<span style="font-weight: bold">(</span>action<span style="font-weight: bold">)
+            </span>x<span style="font-weight: bold">, </span>y <span style="font-weight: bold">= </span>int<span style="font-weight: bold">(</span>x <span style="font-weight: bold">+ </span>dx<span style="font-weight: bold">), </span>int<span style="font-weight: bold">(</span>y <span style="font-weight: bold">+ </span>dy<span style="font-weight: bold">)
+            </span><span style="color: blue; font-weight: bold">if </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls<span style="font-weight: bold">[</span>x<span style="font-weight: bold">][</span>y<span style="font-weight: bold">]:
+                </span><span style="color: blue; font-weight: bold">return </span><span style="color: red">999999
+            </span>cost <span style="font-weight: bold">+= </span><span style="color: red">1
+        </span><span style="color: blue; font-weight: bold">return </span>cost
 
-class AStarFoodSearchAgent(SearchAgent):
-    "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
-    def __init__(self):
-        self.searchFunction = lambda prob: search.aStarSearch(prob, foodHeuristic)
-        self.searchType = FoodSearchProblem
+<span style="color: blue; font-weight: bold">class </span>AStarFoodSearchAgent<span style="font-weight: bold">(</span>SearchAgent<span style="font-weight: bold">):
+    </span><span style="color: red">"A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchFunction <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">lambda </span>prob<span style="font-weight: bold">: </span>search<span style="font-weight: bold">.</span>aStarSearch<span style="font-weight: bold">(</span>prob<span style="font-weight: bold">, </span>foodHeuristic<span style="font-weight: bold">)
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>searchType <span style="font-weight: bold">= </span>FoodSearchProblem
 
-def foodHeuristic(state, problem):
-    """
+<span style="color: blue; font-weight: bold">def </span>foodHeuristic<span style="font-weight: bold">(</span>state<span style="font-weight: bold">, </span>problem<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
     Your heuristic for the FoodSearchProblem goes here.
 
     This heuristic must be consistent to ensure correctness.  First, try to come
@@ -472,88 +469,43 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    heuristics = FoodHeuristics()
-    heuristic = heuristics.mstHeuristic([position] + foodGrid.asList())
-    return heuristic
+    </span>position<span style="font-weight: bold">, </span>foodGrid <span style="font-weight: bold">= </span>state
+    <span style="color: red">"*** YOUR CODE HERE ***"
+    </span><span style="color: blue; font-weight: bold">return </span><span style="color: red">0
 
+</span><span style="color: blue; font-weight: bold">class </span>ClosestDotSearchAgent<span style="font-weight: bold">(</span>SearchAgent<span style="font-weight: bold">):
+    </span><span style="color: red">"Search for all food using a sequence of searches"
+    </span><span style="color: blue; font-weight: bold">def </span>registerInitialState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>actions <span style="font-weight: bold">= []
+        </span>currentState <span style="font-weight: bold">= </span>state
+        <span style="color: blue; font-weight: bold">while</span><span style="font-weight: bold">(</span>currentState<span style="font-weight: bold">.</span>getFood<span style="font-weight: bold">().</span>count<span style="font-weight: bold">() &gt; </span><span style="color: red">0</span><span style="font-weight: bold">):
+            </span>nextPathSegment <span style="font-weight: bold">= </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>findPathToClosestDot<span style="font-weight: bold">(</span>currentState<span style="font-weight: bold">) </span><span style="color: green; font-style: italic"># The missing piece
+            </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>actions <span style="font-weight: bold">+= </span>nextPathSegment
+            <span style="color: blue; font-weight: bold">for </span>action <span style="color: blue; font-weight: bold">in </span>nextPathSegment<span style="font-weight: bold">:
+                </span>legal <span style="font-weight: bold">= </span>currentState<span style="font-weight: bold">.</span>getLegalActions<span style="font-weight: bold">()
+                </span><span style="color: blue; font-weight: bold">if </span>action <span style="color: blue; font-weight: bold">not in </span>legal<span style="font-weight: bold">:
+                    </span>t <span style="font-weight: bold">= (</span>str<span style="font-weight: bold">(</span>action<span style="font-weight: bold">), </span>str<span style="font-weight: bold">(</span>currentState<span style="font-weight: bold">))
+                    </span><span style="color: blue; font-weight: bold">raise </span>Exception<span style="font-weight: bold">, </span><span style="color: red">'findPathToClosestDot returned an illegal move: %s!\n%s' </span><span style="font-weight: bold">% </span>t
+                currentState <span style="font-weight: bold">= </span>currentState<span style="font-weight: bold">.</span>generateSuccessor<span style="font-weight: bold">(</span><span style="color: red">0</span><span style="font-weight: bold">, </span>action<span style="font-weight: bold">)
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>actionIndex <span style="font-weight: bold">= </span><span style="color: red">0
+        </span><span style="color: blue; font-weight: bold">print </span><span style="color: red">'Path found with cost %d.' </span><span style="font-weight: bold">% </span>len<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">.</span>actions<span style="font-weight: bold">)
 
-""" 
-The following are three food heuristics that obtain scores of 2/4,
-3/4, and 4/4.
-"""
-class FoodHeuristics:
-
-    def euclideanDist(self, xy1, xy2):
-        return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
-
-    def simpleFoodHeuristic(self, state, problem):
-        """
-        Just checks how much food is left.
-        
-        Gets 2/4.
-        """
-        position, foodGrid = state
-        return len(foodGrid.asList())
-
-    def minimalDistHeuristic(self, position, extraPositions):
-        """
-        Gets 3/4
-        """
-        def findMinimalDist(position, extraPositions):
-            dists = [self.euclideanDist(position, pos2) for pos2 in extraPositions]
-            return min(dists)
-        minimalDists = [findMinimalDist(pos, list(set(extraPositions) - set([pos])) + [position]) for pos in extraPositions]
-        return sum(sorted(minimalDists))
-
-    def mstHeuristic(self, dots):
-        """
-        Gets 4/4
-        """
-        from scipy.sparse import csr_matrix
-        from scipy.sparse.csgraph import minimum_spanning_tree
-        pairs = [(i, j) for i in range(len(dots)) for j in range(len(dots)) if i < j]
-        row = [dot1 for (dot1, dot2) in pairs]
-        col = [dot2 for (dot1, dot2) in pairs]
-        data = [self.euclideanDist(dots[dot1], dots[dot2]) for (dot1, dot2) in pairs]
-        matrix = csr_matrix((data, (row, col)), shape=(len(dots), len(dots)))
-        Tcsr = minimum_spanning_tree(matrix)
-        return Tcsr.sum()
-    
-    
-
-
-class ClosestDotSearchAgent(SearchAgent):
-    "Search for all food using a sequence of searches"
-    def registerInitialState(self, state):
-        self.actions = []
-        currentState = state
-        while(currentState.getFood().count() > 0):
-            nextPathSegment = self.findPathToClosestDot(currentState) # The missing piece
-            self.actions += nextPathSegment
-            for action in nextPathSegment:
-                legal = currentState.getLegalActions()
-                if action not in legal:
-                    t = (str(action), str(currentState))
-                    raise Exception, 'findPathToClosestDot returned an illegal move: %s!\n%s' % t
-                currentState = currentState.generateSuccessor(0, action)
-        self.actionIndex = 0
-        print 'Path found with cost %d.' % len(self.actions)
-
-    def findPathToClosestDot(self, gameState):
-        """
+    </span><span style="color: blue; font-weight: bold">def </span>findPathToClosestDot<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         Returns a path (a list of actions) to the closest dot, starting from
         gameState.
         """
-        # Here are some useful elements of the startState
-        startPosition = gameState.getPacmanPosition()
-        food = gameState.getFood()
-        walls = gameState.getWalls()
-        problem = AnyFoodSearchProblem(gameState)
-        return search.bfs(problem)
+        </span><span style="color: green; font-style: italic"># Here are some useful elements of the startState
+        </span>startPosition <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getPacmanPosition<span style="font-weight: bold">()
+        </span>food <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getFood<span style="font-weight: bold">()
+        </span>walls <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getWalls<span style="font-weight: bold">()
+        </span>problem <span style="font-weight: bold">= </span>AnyFoodSearchProblem<span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">)
 
-class AnyFoodSearchProblem(PositionSearchProblem):
-    """
+        </span><span style="color: red">"*** YOUR CODE HERE ***"
+        </span>util<span style="font-weight: bold">.</span>raiseNotDefined<span style="font-weight: bold">()
+
+</span><span style="color: blue; font-weight: bold">class </span>AnyFoodSearchProblem<span style="font-weight: bold">(</span>PositionSearchProblem<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
     A search problem for finding a path to any food.
 
     This search problem is just like the PositionSearchProblem, but has a
@@ -567,27 +519,29 @@ class AnyFoodSearchProblem(PositionSearchProblem):
     method.
     """
 
-    def __init__(self, gameState):
-        "Stores information from the gameState.  You don't need to change this."
-        # Store the food for later reference
-        self.food = gameState.getFood()
+    </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+        </span><span style="color: red">"Stores information from the gameState.  You don't need to change this."
+        </span><span style="color: green; font-style: italic"># Store the food for later reference
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>food <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getFood<span style="font-weight: bold">()
 
-        # Store info for the PositionSearchProblem (no need to change this)
-        self.walls = gameState.getWalls()
-        self.startState = gameState.getPacmanPosition()
-        self.costFn = lambda x: 1
-        self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
+        </span><span style="color: green; font-style: italic"># Store info for the PositionSearchProblem (no need to change this)
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>walls <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getWalls<span style="font-weight: bold">()
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>startState <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getPacmanPosition<span style="font-weight: bold">()
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>costFn <span style="font-weight: bold">= </span><span style="color: blue; font-weight: bold">lambda </span>x<span style="font-weight: bold">: </span><span style="color: red">1
+        </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_visited<span style="font-weight: bold">, </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_visitedlist<span style="font-weight: bold">, </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>_expanded <span style="font-weight: bold">= {}, [], </span><span style="color: red">0 </span><span style="color: green; font-style: italic"># DO NOT CHANGE
 
-    def isGoalState(self, state):
-        """
+    </span><span style="color: blue; font-weight: bold">def </span>isGoalState<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>state<span style="font-weight: bold">):
+        </span><span style="color: darkred">"""
         The state is Pacman's position. Fill this in with a goal test that will
         complete the problem definition.
         """
-        x,y = state
-        return state in self.food.asList()
+        </span>x<span style="font-weight: bold">,</span>y <span style="font-weight: bold">= </span>state
 
-def mazeDistance(point1, point2, gameState):
-    """
+        <span style="color: red">"*** YOUR CODE HERE ***"
+        </span>util<span style="font-weight: bold">.</span>raiseNotDefined<span style="font-weight: bold">()
+
+</span><span style="color: blue; font-weight: bold">def </span>mazeDistance<span style="font-weight: bold">(</span>point1<span style="font-weight: bold">, </span>point2<span style="font-weight: bold">, </span>gameState<span style="font-weight: bold">):
+    </span><span style="color: darkred">"""
     Returns the maze distance between any two points, using the search functions
     you have already built. The gameState can be any game state -- Pacman's
     position in that state is ignored.
@@ -596,10 +550,35 @@ def mazeDistance(point1, point2, gameState):
 
     This might be a useful helper function for your ApproximateSearchAgent.
     """
-    x1, y1 = point1
-    x2, y2 = point2
-    walls = gameState.getWalls()
-    assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
-    assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
-    prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
-    return len(search.bfs(prob))
+    </span>x1<span style="font-weight: bold">, </span>y1 <span style="font-weight: bold">= </span>point1
+    x2<span style="font-weight: bold">, </span>y2 <span style="font-weight: bold">= </span>point2
+    walls <span style="font-weight: bold">= </span>gameState<span style="font-weight: bold">.</span>getWalls<span style="font-weight: bold">()
+    </span><span style="color: blue; font-weight: bold">assert not </span>walls<span style="font-weight: bold">[</span>x1<span style="font-weight: bold">][</span>y1<span style="font-weight: bold">], </span><span style="color: red">'point1 is a wall: ' </span><span style="font-weight: bold">+ </span>str<span style="font-weight: bold">(</span>point1<span style="font-weight: bold">)
+    </span><span style="color: blue; font-weight: bold">assert not </span>walls<span style="font-weight: bold">[</span>x2<span style="font-weight: bold">][</span>y2<span style="font-weight: bold">], </span><span style="color: red">'point2 is a wall: ' </span><span style="font-weight: bold">+ </span>str<span style="font-weight: bold">(</span>point2<span style="font-weight: bold">)
+    </span>prob <span style="font-weight: bold">= </span>PositionSearchProblem<span style="font-weight: bold">(</span>gameState<span style="font-weight: bold">, </span>start<span style="font-weight: bold">=</span>point1<span style="font-weight: bold">, </span>goal<span style="font-weight: bold">=</span>point2<span style="font-weight: bold">, </span>warn<span style="font-weight: bold">=</span><span style="color: blue; font-weight: bold">False</span><span style="font-weight: bold">, </span>visualize<span style="font-weight: bold">=</span><span style="color: blue; font-weight: bold">False</span><span style="font-weight: bold">)
+    </span><span style="color: blue; font-weight: bold">return </span>len<span style="font-weight: bold">(</span>search<span style="font-weight: bold">.</span>bfs<span style="font-weight: bold">(</span>prob<span style="font-weight: bold">))
+</span>
+  </pre>
+  </body>
+  </html>
+  <!--
+     FILE ARCHIVED ON 07:41:06 Sep 09, 2016 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 07:21:40 May 28, 2018.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  LoadShardBlock: 545.078 (3)
+  esindex: 0.01
+  captures_list: 600.836
+  CDXLines.iter: 15.702 (3)
+  PetaboxLoader3.datanode: 294.691 (4)
+  exclusion.robots: 0.252
+  exclusion.robots.policy: 0.234
+  RedisCDXSource: 35.108
+  PetaboxLoader3.resolve: 84.167
+  load_resource: 129.508
+-->
