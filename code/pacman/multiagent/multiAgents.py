@@ -202,6 +202,35 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
       Your expectimax agent (question 4)
     """
 
+    def _nextAgent(self, agentIndex, numAgents, depth):
+        nextAgentIndex = agentIndex + 1
+        nextDepth = depth
+        if nextAgentIndex >= numAgents:
+            nextAgentIndex = 0
+            nextDepth = depth - 1
+        return nextAgentIndex, nextDepth
+            
+    def _cutoff(self, gameState, agentIndex, depth):
+        return depth == 0 or len(gameState.getLegalActions(agentIndex)) == 0
+              
+    def _evaluateNode(self, gameState, agentIndex, depth):
+        if self._cutoff(gameState, agentIndex, depth):
+            return (self.evaluationFunction(gameState), None)
+        nextAgentIndex, nextDepth = self._nextAgent(agentIndex, 
+                                                    gameState.getNumAgents(), 
+                                                    depth)    
+        actions = gameState.getLegalActions(agentIndex)
+        successors = [gameState.generateSuccessor(agentIndex, action) for
+                      action in actions]
+        evaluations = [self._evaluateNode(successor, nextAgentIndex, nextDepth)[0] for
+                       successor in successors]
+        if agentIndex == 0:
+            evaluatedActions = list(zip(evaluations, actions))
+            return max(evaluatedActions)
+        else:
+            return (sum(evaluations) / float(len(evaluations)), None)
+
+
     def getAction(self, gameState):
         """
           Returns the expectimax action using self.depth and self.evaluationFunction
@@ -209,8 +238,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           All ghosts should be modeled as choosing uniformly at random from their
           legal moves.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self._evaluateNode(gameState, 0, self.depth)[1]
 
 def betterEvaluationFunction(currentGameState):
     """
@@ -220,7 +248,35 @@ def betterEvaluationFunction(currentGameState):
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    newPos = currentGameState.getPacmanPosition()
+    newFood = currentGameState.getFood()
+    newGhostStates = currentGameState.getGhostStates()
+    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]    
+    if len(newFood.asList()) == 0:
+        return 100000
+
+    # compute features
+    from search.searchAgents import ClosestDotSearchAgent
+    agent = ClosestDotSearchAgent()
+    closestPath = agent.findPathToClosestDot(currentGameState)
+    closestDotFeature = (1.0 / len(closestPath))
+    numFoodFeature = (1.0 / len(newFood.asList()))
+    scaredTimeFeature = sum(newScaredTimes)
+    ghostDistance = min([manhattanDist(ghostState.getPosition(), newPos) for 
+                         ghostState in newGhostStates])
+    if ghostDistance <= 1 and 0 in newScaredTimes:
+        closeGhostFeature = 1.0   
+    else:
+        closeGhostFeature = 0.0
+    
+    # compute weighted sum of features
+    score = 0
+    score += 20 * scaredTimeFeature
+    score += -500 * closeGhostFeature
+    score += 50 * currentGameState.getScore()
+    score += 10 * closestDotFeature
+    score += 10 * numFoodFeature
+    return score
 
 # Abbreviation
 better = betterEvaluationFunction
