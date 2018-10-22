@@ -361,26 +361,23 @@ def cornersHeuristic(state, problem):
     def manhattanDist(xy1, xy2):
         return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
     
-    def manhattanHeuristicRecursive(position, extraPositions):
-        "The Manhattan distance heuristic for a CornerSearchProblem"
-        if len(extraPositions) == 0:
+    def recursiveHeuristic(position, remainingCorners):
+        if len(remainingCorners) == 0:
             return 0
-        distances = [(manhattanDist(position, extraPosition), extraPosition) for extraPosition in extraPositions]
+        distances = [(manhattanDist(position, corner), corner) for 
+                     corner in remainingCorners]
         sortedDistances = sorted(distances)
-        if len(distances) > 1:
-            extra = manhattanHeuristicRecursive(sortedDistances[0][1], [pos for (i, pos) in sortedDistances[1:]])
-        else:
-            extra = 0
-        return sortedDistances[0][0] + extra
+        (closestCornerDistance, closestCorner) = sortedDistances[0]
+        remainingDistance = recursiveHeuristic(closestCorner, 
+                                               [pos for (i, pos) in sortedDistances[1:]])
+        return closestCornerDistance + remainingDistance
 
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-    if problem.isGoalState(state):
-        return 0
     (currentPosition, visitedCorners) = state
-    activeCorners = [corner for (i, corner) in enumerate(corners) if not visitedCorners[i]]
-    heuristic = manhattanHeuristicRecursive(currentPosition, activeCorners)
-    return heuristic
+    activeCorners = [corner 
+                     for (i, corner) in enumerate(problem.corners) 
+                     if not visitedCorners[i]]
+    return recursiveHeuristic(currentPosition, activeCorners)
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -475,6 +472,8 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     heuristics = FoodHeuristics()
     heuristic = heuristics.mstHeuristic([position] + foodGrid.asList())
+    #heuristic = heuristics.minimalDistHeuristic(position, foodGrid.asList())
+    #heuristic = heuristics.simpleFoodHeuristic(state, problem)
     return heuristic
 
 
