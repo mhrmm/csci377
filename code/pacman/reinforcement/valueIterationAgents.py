@@ -95,6 +95,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         (q0, bestAction) = max(zip(qValues, possibleActions))
         return bestAction
     
+
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
 

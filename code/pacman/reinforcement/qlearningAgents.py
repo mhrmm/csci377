@@ -104,6 +104,7 @@ class QLearningAgent(ReinforcementAgent):
         else:
             return self.computeActionFromQValues(state)
             
+
     def update(self, state, action, nextState, reward):
         """
           The parent class calls this to observe a
