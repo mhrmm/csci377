@@ -94,6 +94,11 @@ class SimpleExtractor(FeatureExtractor):
         if not features["#-of-ghosts-1-step-away"] and food[next_x][next_y]:
             features["eats-food"] = 1.0
 
+
+        #unscaredGhosts = [ghostState for ghostState in state.getGhostStates() if ghostState.scaredTimer == 0]
+        #if len(unscaredGhosts) == 0:
+        #    features["scared-ghosts"] = 1.0
+
         dist = closestFood((next_x, next_y), food, walls)
         if dist is not None:
             # make the distance a number less than one otherwise the update
