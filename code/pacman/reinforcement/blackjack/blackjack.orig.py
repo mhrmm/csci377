@@ -6,14 +6,13 @@ Created on Mon Oct 29 18:29:37 2018
 @author: hopkinsm
 """
 
-import environment
 import random
 import util
 
 
     
     
-class BlackjackEnvironment(environment.Environment):
+class BlackjackEnvironment:
 
     def __init__(self):
         self.reset()
@@ -104,17 +103,20 @@ class QLearningAgent():
         self.env = env
         self.epsilon = epsilon
         self.discount = discount
-
-    def go(self, iters):
         self.qaCount = util.Counter()
-        for i in range(iters):
+        self.batchSize = 1000
+        self.handsDealt = 0
+
+    def go(self):
+        for i in range(self.batchSize):
             self.env.reset()
             while(len(self.env.getPossibleActions(self.env.getCurrentState())) > 0):
                 state = self.env.getCurrentState()
                 action = self.getAction(state)
                 (nextState, reward) = self.env.doAction(action)
                 self.update(state, action, nextState, reward)
-        
+        self.handsDealt += self.batchSize
+            
             
 
     def getQValue(self, state, action):
@@ -201,7 +203,7 @@ class QLearningAgent():
                 legalActions = self.env.getPossibleActions(state)
                 qVals = [self.getQValue(state, action) for action in legalActions]
                 print(state)
-                print(zip(legalActions, qVals))
+                print(list(zip(legalActions, qVals)))
                 
 
     def printCounts(self):
@@ -228,9 +230,12 @@ class ApproxQLearningAgent(QLearningAgent):
         return self.weights
 
     def getFeatures(self, state, action):
-        feats = {str((state, action)): 1.0}#, str(state): 1.0}
+        featname = '{}-{}'.format(state,action)
+        featname2 = '{}--{}'.format(state,action)
+        featname3 = '{}---{}'.format(state,action)
+        feats = {featname: 1.0, featname2: 1.0, featname3: 1.0}#, str(state): 1.0}
+        """
         if state not in set(['DONE', 'WIN', 'DRAW', 'LOSE', 'START']):
-            #feats['total'] = int(state)
             cardTotal = int(state)
             if cardTotal < 17:
                 feats['lt17{}'.format(action)] = 1.0
@@ -249,6 +254,7 @@ class ApproxQLearningAgent(QLearningAgent):
             #    featureName = 'lt{}'.format(i)
             #    feats[featureName] = 1.0       
         #print(feats)
+        """
         return feats
 
     def getQValue(self, state, action):
@@ -280,8 +286,8 @@ class ApproxQLearningAgent(QLearningAgent):
         """
         maxQ = self._computeValueActionPairFromQValues(nextState)[0]
         self.qaCount[(state, action)] += 1
-        alpha = 60. / (59 + self.qaCount[(state, action)])
-
+        #alpha = 60. / (59 + self.qaCount[(state, action)])
+        alpha = 1. / self.qaCount[(state, action)]
         multiplier = alpha * (
                 reward 
                 + (self.discount * maxQ) 
@@ -290,11 +296,95 @@ class ApproxQLearningAgent(QLearningAgent):
         for featureName in featureVector:
             featureValue = featureVector[featureName]
             self.weights[featureName] = self.weights[featureName] + multiplier * featureValue
+            #if featureName in ['21-hit', '21--hit', '21---hit']:
+                #print(alpha)
+                #print(multiplier)
+                #print('{}: {}'.format(featureName, self.weights[featureName]))
 
 
+from pgl import GWindow, GLabel, GRect
+
+GWINDOW_WIDTH = 1000               # Width of the graphics window
+GWINDOW_HEIGHT = 500              # Height of the graphics window
+LETTER_BASE = 10                  # Distance from bottom to the letters
+WORD_BASE = 45                    # Distance from bottom to secret word
+MESSAGE_BASE = 85                 # Distance from bottom to message area
+SNOWMAN_BASE = 140                # Distance from bottom to Snowman base
+MAX_INCORRECT_GUESSES = 8         # Number of incorrect guesses allowed
+INCORRECT_COLOR = "#FF9999"       # Color used for incorrect guesses
+CORRECT_COLOR = "#009900"         # Color used to mark correct guesses
+
+# Fonts
+
+WORD_FONT = "bold 36px 'Monaco','Monospaced'"
+LETTER_FONT = "bold 24px 'Monaco','Monospaced'"
+MESSAGE_FONT = "48px 'Helvetica Neue','Arial','Sans-Serif'"
+gw = GWindow(GWINDOW_WIDTH, GWINDOW_HEIGHT)
+
+def createWindow():
+ 
+    
+    def createCardTotalLabels():
+        
+        alphabet = ['02','03','04','05','06','07','08','09','10',
+                    '11','12','13','14','15','16','17','18','19',
+                    '20','21']
+        alphabetLabels = [GLabel(letter) for letter in alphabet]
+        for label in alphabetLabels:
+            label.setFont(LETTER_FONT)
+            
+        return alphabetLabels
+    
+     
+    def makeDisplay(alphabetLabels):
+        decisionIndicators = []
+        letterWidth = alphabetLabels[0].getWidth()
+        offset = (GWINDOW_WIDTH - 
+                  (len(alphabetLabels) * letterWidth)) / (len(alphabetLabels) + 1)
+        for (i, label) in enumerate(alphabetLabels):
+            x = (offset + letterWidth) * i + offset
+            gw.add(label, x, GWINDOW_HEIGHT - LETTER_BASE)
+            decisionIndicator = GRect(x, GWINDOW_HEIGHT - 5 * LETTER_BASE, letterWidth, 10)
+            decisionIndicator.setFillColor("green")
+            decisionIndicator.setFilled(True)
+            gw.add(decisionIndicator)
+            decisionIndicators.append(decisionIndicator)
+        return decisionIndicators
+            
+    cardTotalLabels  = createCardTotalLabels()
+    return makeDisplay(cardTotalLabels)
+
+decisionIndicators = createWindow()
+progressLabel = GLabel("0")
+gw.add(progressLabel, 20, 20)
 
 env = BlackjackEnvironment()
 agent = ApproxQLearningAgent(env)
-agent.go(200000)
-agent.printPolicy()
-agent.printStates()
+
+
+
+def adjustIndicators():
+    progressLabel.setLabel(agent.handsDealt)
+    for (j, indicator) in enumerate(decisionIndicators):
+        action = agent.getPolicy(str(j+2))
+        if action == 'hit':
+            indicator.setFillColor("green")
+            indicator.setFilled(True)
+        else:
+            indicator.setFillColor("red")
+            indicator.setFilled(True)
+
+timer1 = gw.createTimer(agent.go, 1000)
+timer1.setRepeats(True)
+timer1.start()
+timer2 = gw.createTimer(adjustIndicators, 1500)
+timer2.setRepeats(True)
+timer2.start()
+
+            
+#agent.go(50000, decisionIndicators)
+#agent.printPolicy()
+#agent.printStates()
+#print(agent.weights)    
+
+
