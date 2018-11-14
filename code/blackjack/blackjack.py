@@ -125,22 +125,3 @@ class QLearningAgent():
                         featureValue)
 
 
-
-
-class BlackjackQLearningAgent(QLearningAgent):
-    """
-    def getFeatures(self, state, action):
-        featname = '{}-{}'.format(state,action)
-        feats = {featname: 1.0}#, str(state): 1.0}
-        #if state not in set(['DONE', 'WIN', 'DRAW', 'LOSE', 'START']):            
-        #    featname = 'UP{}-{}'.format(state[1],action)
-        #    feats[featname] = 1.0
-        #    featname = 'TOT{}-{}'.format(state[0],action)
-            #feats[featname] = 1.0
-        #    featname = 'UP{}'.format(state[1])     
-            #feats[featname] = 1.0
-        return feats
-    """
-    
-
-    
