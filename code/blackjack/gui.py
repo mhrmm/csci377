@@ -1,5 +1,5 @@
 from pgl import GWindow, GLabel, GRect
-from blackjack import BlackjackQLearningAgent
+from blackjack import QLearningAgent
 from environment import BlackjackEnvironment
 
 GWINDOW_WIDTH = 1000               # Width of the graphics window
@@ -21,7 +21,7 @@ gw = GWindow(GWINDOW_WIDTH, GWINDOW_HEIGHT)
 
 
 env = BlackjackEnvironment()
-agent = BlackjackQLearningAgent(env)
+agent = QLearningAgent(env)
 
 def createWindow():
  
